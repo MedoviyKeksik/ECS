@@ -7,7 +7,7 @@ namespace ecs
 {
 namespace event
 {
-
+class IEvent;
 }
 } // namespace ecs
 
