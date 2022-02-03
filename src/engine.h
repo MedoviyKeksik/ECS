@@ -1,5 +1,9 @@
 #pragma once
 
+#include <utility>
+
+#include "./util/global.hpp"
+
 namespace ecs
 {
 namespace util
@@ -41,7 +45,7 @@ public:
     template <typename E, typename... Args>
     void SendEvent(Args&&... args)
     {
-        ECS_EventHandler->Send<E>(std::forward<Args>(event)...);
+        ECS_EventHandler->Send<E>(std::forward<Args>(args)...);
     }
 
     void Update(f32 tickMS);

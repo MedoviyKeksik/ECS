@@ -16,15 +16,15 @@ class IEvent
 public:
     IEvent(EventTypeId typeId);
 
-    inline const EventTypeId GetEventTypeID() const { return this->m_typeId; }
+    inline const EventTypeId    GetEventTypeID() const { return this->typeId; }
     inline const EventTimeStamp GetTimeCreated() const
     {
-        return this->m_timeCreated;
+        return this->timeCreated;
     }
 
 private:
-    EventTypeId    m_typeId;
-    EventTimeStamp m_timeCreated;
+    EventTypeId    typeId;
+    EventTimeStamp timeCreated;
 };
 
 } // namespace event
