@@ -27,21 +27,6 @@ class ECS_API ISystem
 {
     friend class SystemManager;
 
-private:
-    /// Duration since last system update in milliseconds.
-    f32 m_TimeSinceLastUpdate;
-
-    SystemPriority m_Priority;
-
-    /// The system update interval.
-    /// A negative value means system should update each time the engine
-    /// receives an update.
-    f32 m_UpdateInterval;
-
-    u8 m_Enabled : 1;
-    u8 m_NeedsUpdate : 1;
-    u8 m_Reserved : 6;
-
 protected:
     ISystem(SystemPriority priority          = NORMAL_SYSTEM_PRIORITY,
             f32            updateInterval_ms = -1.0f);
@@ -55,6 +40,18 @@ public:
     virtual void PreUpdate(f32 dt)  = 0;
     virtual void Update(f32 dt)     = 0;
     virtual void PostUpdate(f32 dt) = 0;
+
+private:
+    /// Duration since last system update in milliseconds.
+    f32            timeSinceLastUpdate;
+    SystemPriority systemPriority;
+    /// The system update interval.
+    /// A negative value means system should update each time the engine
+    /// receives an update.
+    f32 updateInterval;
+    u8  isEnabled : 1;
+    u8  isNeedsUpdate : 1;
+    u8  reserved : 6;
 };
 } // namespace ecs
 

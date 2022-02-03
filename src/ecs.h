@@ -13,7 +13,7 @@
 #include "systemmanager.h"
 
 #include "event.h"
-#include "ieventListener.h"
+#include "ieventlistener.h"
 
 namespace ecs
 {

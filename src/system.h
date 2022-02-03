@@ -13,24 +13,14 @@ class System : public ISystem
 {
     friend class SystemManager;
 
-private:
-    SystemManager* m_SystemManagerInstance;
-
 protected:
     DECLARE_LOGGER
+    System();
 
 public:
+    virtual ~System();
+
     static const SystemTypeId STATIC_SYSTEM_TYPE_ID;
-
-protected:
-    System()
-    {
-        DEFINE_LOGGER(typeid(T).name())
-        LogInfo("System %s created.", typeid(T).name());
-    }
-
-public:
-    virtual ~System() { LogInfo("System %s released.", typeid(T).name()); }
 
     virtual inline const SystemTypeId GetStaticSystemTypeID() const
     {
@@ -50,17 +40,16 @@ public:
      * dependencies.
      */
     template <class... Dependencies>
-    void AddDependencies(Dependencies&&... dependencies)
-    {
-        this->m_SystemManagerInstance->AddSystemDependency(
-            this, std::forward<Dependencies>(dependencies)...);
-    }
+    void AddDependencies(Dependencies&&... dependencies);
 
     virtual void PreUpdate(f32 dt) override {}
 
     virtual void Update(f32 dt) override {}
 
     virtual void PostUpdate(f32 dt) override {}
+
+private:
+    SystemManager* systemManager;
 
 }; // class System<T>
 

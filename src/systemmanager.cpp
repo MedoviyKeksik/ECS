@@ -9,7 +9,7 @@ SystemManager::SystemManager()
     LogInfo("Initialize SystemManager!");
 
     // acquire global memory
-    this->m_SystemAllocator = new SystemAllocator(
+    this->systemAllocator = new SystemAllocator(
         ECS_SYSTEM_MEMORY_BUFFER_SIZE,
         Allocate(ECS_SYSTEM_MEMORY_BUFFER_SIZE, "SystemManager"));
 }
@@ -17,58 +17,58 @@ SystemManager::SystemManager()
 SystemManager::~SystemManager()
 {
     for (SystemWorkOrder::reverse_iterator it =
-             this->m_SystemWorkOrder.rbegin();
-         it != this->m_SystemWorkOrder.rend();
+             this->systemWorkOrder.rbegin();
+         it != this->systemWorkOrder.rend();
          ++it)
     {
         (*it)->~ISystem();
         *it = nullptr;
     }
 
-    m_SystemWorkOrder.clear();
-    m_Systems.clear();
+    systemWorkOrder.clear();
+    systemRegistry.clear();
 
     // free allocated global memory
-    Free((void*)this->m_SystemAllocator->GetMemoryAddress0());
-    delete this->m_SystemAllocator;
-    this->m_SystemAllocator = nullptr;
+    Free((void*)this->systemAllocator->GetMemoryAddress0());
+    delete this->systemAllocator;
+    this->systemAllocator = nullptr;
 
     LogInfo("Release SystemManager!");
 }
 
 void SystemManager::Update(f32 dt_ms)
 {
-    for (ISystem* system : this->m_SystemWorkOrder)
+    for (ISystem* system : this->systemWorkOrder)
     {
         // increase interval since last update
-        system->m_TimeSinceLastUpdate += dt_ms;
+        system->timeSinceLastUpdate += dt_ms;
 
         // check systems update state
-        system->m_NeedsUpdate =
-            (system->m_UpdateInterval < 0.0f) ||
-            ((system->m_UpdateInterval > 0.0f) &&
-             (system->m_TimeSinceLastUpdate > system->m_UpdateInterval));
+        system->isNeedsUpdate =
+            (system->updateInterval < 0.0f) ||
+            ((system->updateInterval > 0.0f) &&
+             (system->timeSinceLastUpdate > system->updateInterval));
 
-        if (system->m_Enabled == true && system->m_NeedsUpdate == true)
+        if (system->isEnabled == true && system->isNeedsUpdate == true)
         {
             system->PreUpdate(dt_ms);
         }
     }
 
-    for (ISystem* system : this->m_SystemWorkOrder)
+    for (ISystem* system : this->systemWorkOrder)
     {
-        if (system->m_Enabled == true && system->m_NeedsUpdate == true)
+        if (system->isEnabled == true && system->isNeedsUpdate == true)
         {
             system->Update(dt_ms);
 
             // reset interval
-            system->m_TimeSinceLastUpdate = 0.0f;
+            system->timeSinceLastUpdate = 0.0f;
         }
     }
 
-    for (ISystem* system : this->m_SystemWorkOrder)
+    for (ISystem* system : this->systemWorkOrder)
     {
-        if (system->m_Enabled == true && system->m_NeedsUpdate == true)
+        if (system->isEnabled == true && system->isNeedsUpdate == true)
         {
             system->PostUpdate(dt_ms);
         }
@@ -99,7 +99,7 @@ void SystemManager::UpdateSystemWorkOrder()
         output.push_back(vertex);
     };
 
-    const size_t NUM_SYSTEMS = this->m_SystemDependencyMatrix.size();
+    const size_t NUM_SYSTEMS = this->systemDependencyMatrix.size();
 
     // create index array
     std::vector<int> INDICES(NUM_SYSTEMS);
@@ -132,8 +132,8 @@ void SystemManager::UpdateSystemWorkOrder()
             for (int i = 0; i < INDICES.size(); ++i)
             {
                 if (INDICES[i] != -1 &&
-                    (this->m_SystemDependencyMatrix[i][index] == true ||
-                     this->m_SystemDependencyMatrix[index][i] == true))
+                    (this->systemDependencyMatrix[i][index] == true ||
+                     this->systemDependencyMatrix[index][i] == true))
                 {
                     member.push_back(i);
                     INDICES[i] = -1;
@@ -142,9 +142,9 @@ void SystemManager::UpdateSystemWorkOrder()
 
             group.push_back(index);
 
-            ISystem* sys  = this->m_Systems[index];
+            ISystem* sys  = this->systemRegistry[index];
             groupPriority = std::max(
-                (sys != nullptr ? sys->m_Priority : NORMAL_SYSTEM_PRIORITY),
+                (sys != nullptr ? sys->systemPriority : NORMAL_SYSTEM_PRIORITY),
                 groupPriority);
         }
 
@@ -169,7 +169,7 @@ void SystemManager::UpdateSystemWorkOrder()
         for (int i = 0; i < g.size(); ++i)
         {
             if (vertex_states[g[i]] == 0)
-                DFS(g[i], vertex_states, this->m_SystemDependencyMatrix, order);
+                DFS(g[i], vertex_states, this->systemDependencyMatrix, order);
         }
 
         std::reverse(order.begin(), order.end());
@@ -185,15 +185,15 @@ void SystemManager::UpdateSystemWorkOrder()
     LogInfo("Update system work order:")
 
         // re-build system work order
-        this->m_SystemWorkOrder.clear();
+        this->systemWorkOrder.clear();
     for (auto group : VERTEX_GROUPS_SORTED)
     {
         for (auto m : group.second)
         {
-            ISystem* sys = this->m_Systems[m];
+            ISystem* sys = this->systemRegistry[m];
             if (sys != nullptr)
             {
-                this->m_SystemWorkOrder.push_back(sys);
+                this->systemWorkOrder.push_back(sys);
                 LogInfo("\t%s", sys->GetSystemTypeName())
             }
         }
@@ -202,11 +202,11 @@ void SystemManager::UpdateSystemWorkOrder()
 
 SystemWorkStateMask SystemManager::GetSystemWorkState() const
 {
-    SystemWorkStateMask mask(this->m_SystemWorkOrder.size());
+    SystemWorkStateMask mask(this->systemWorkOrder.size());
 
-    for (int i = 0; i < this->m_SystemWorkOrder.size(); ++i)
+    for (int i = 0; i < this->systemWorkOrder.size(); ++i)
     {
-        mask[i] = this->m_SystemWorkOrder[i]->m_Enabled;
+        mask[i] = this->systemWorkOrder[i]->isEnabled;
     }
 
     return mask;
@@ -214,13 +214,204 @@ SystemWorkStateMask SystemManager::GetSystemWorkState() const
 
 void SystemManager::SetSystemWorkState(SystemWorkStateMask mask)
 {
-    assert(mask.size() == this->m_SystemWorkOrder.size() &&
+    assert(mask.size() == this->systemWorkOrder.size() &&
            "Provided mask does not match size of current system array.");
 
-    for (int i = 0; i < this->m_SystemWorkOrder.size(); ++i)
+    for (int i = 0; i < this->systemWorkOrder.size(); ++i)
     {
-        this->m_SystemWorkOrder[i]->m_Enabled = mask[i];
+        this->systemWorkOrder[i]->isEnabled = mask[i];
     }
+}
+
+template <class T, class... ARGS>
+T* SystemManager::AddSystem(ARGS&&... systemArgs)
+{
+    const u64 STID = T::STATIC_SYSTEM_TYPE_ID;
+
+    // avoid multiple registrations of the same system
+    auto it = this->systemRegistry.find(STID);
+    if ((this->systemRegistry.find(STID) != this->systemRegistry.end()) &&
+        (it->second != nullptr))
+        return (T*)it->second;
+
+    T*    system     = nullptr;
+    void* pSystemMem = this->systemAllocator->allocate(sizeof(T), alignof(T));
+    if (pSystemMem != nullptr)
+    {
+
+        ((T*)pSystemMem)->systemManager = this;
+
+        // create new system
+        system = new (pSystemMem) T(std::forward<ARGS>(systemArgs)...);
+        this->systemRegistry[STID] = system;
+
+        LogInfo(
+            "System \'%s\' (%d bytes) created.", typeid(T).name(), sizeof(T));
+    }
+    else
+    {
+        LogError("Unable to create system \'%s\' (%d bytes).",
+                 typeid(T).name(),
+                 sizeof(T));
+        assert(true);
+    }
+
+    // resize dependency matrix
+    if (STID + 1 > this->systemDependencyMatrix.size())
+    {
+        this->systemDependencyMatrix.resize(STID + 1);
+        for (int i = 0; i < this->systemDependencyMatrix.size(); ++i)
+            this->systemDependencyMatrix[i].resize(STID + 1);
+    }
+
+    // add to work list
+    this->systemWorkOrder.push_back(system);
+
+    return system;
+}
+template <class System_, class Dependency_>
+void SystemManager::AddSystemDependency(System_ target, Dependency_ dependency)
+{
+    const u64 TARGET_ID = target->GetStaticSystemTypeID();
+    const u64 DEPEND_ID = dependency->GetStaticSystemTypeID();
+
+    if (this->systemDependencyMatrix[TARGET_ID][DEPEND_ID] != true)
+    {
+        this->systemDependencyMatrix[TARGET_ID][DEPEND_ID] = true;
+        LogInfo("added '%s' as dependency to '%s'",
+                dependency->GetSystemTypeName(),
+                target->GetSystemTypeName())
+    }
+
+    // this->UpdateSystemWorkOrder();
+}
+template <class Target_, class Dependency_, class... Dependencies>
+void SystemManager::AddSystemDependency(Target_     target,
+                                        Dependency_ dependency,
+                                        Dependencies&&... dependencies)
+{
+    const u64 TARGET_ID = target->GetStaticSystemTypeID();
+    const u64 DEPEND_ID = dependency->GetStaticSystemTypeID();
+
+    if (this->systemDependencyMatrix[TARGET_ID][DEPEND_ID] != true)
+    {
+        this->systemDependencyMatrix[TARGET_ID][DEPEND_ID] = true;
+        LogInfo("added '%s' as dependency to '%s'",
+                dependency->GetSystemTypeName(),
+                target->GetSystemTypeName())
+    }
+
+    this->AddSystemDependency(target,
+                              std::forward<Dependencies>(dependencies)...);
+}
+template <class T>
+void SystemManager::EnableSystem()
+{
+    const SystemTypeId STID = T::STATIC_SYSTEM_TYPE_ID;
+    // get system
+    auto it = this->systemRegistry.find(STID);
+    if (it != this->systemRegistry.end())
+    {
+        if (it->second->enabled == true)
+            return;
+        // enable system
+        it->second->enabled = true;
+    }
+    else
+    {
+        LogWarning("Trying to enable system [%d], but system is not "
+                   "registered yet.",
+                   STID);
+    }
+}
+template <class T>
+void SystemManager::DisableSystem()
+{
+    const SystemTypeId STID = T::STATIC_SYSTEM_TYPE_ID;
+    // get system
+    auto it = this->systemRegistry.find(STID);
+    if (it != this->systemRegistry.end())
+    {
+        if (it->second->enabled == false)
+            return;
+
+        // enable system
+        it->second->enabled = false;
+    }
+    else
+    {
+        LogWarning("Trying to disable system [%d], but system is not "
+                   "registered yet.",
+                   STID);
+    }
+}
+template <class T>
+void SystemManager::SetSystemUpdateInterval(f32 interval_ms)
+{
+    const SystemTypeId STID = T::STATIC_SYSTEM_TYPE_ID;
+    // get system
+    auto it = this->systemRegistry.find(STID);
+    if (it != this->systemRegistry.end())
+    {
+        it->second->updateInterval = interval_ms;
+    }
+    else
+    {
+        LogWarning("Trying to change system's [%d] update interval, but "
+                   "system is not registered yet.",
+                   STID);
+    }
+}
+template <class T>
+void SystemManager::SetSystemPriority(SystemPriority newPriority)
+{
+    const SystemTypeId STID = T::STATIC_SYSTEM_TYPE_ID;
+    // get system
+    auto it = this->systemRegistry.find(STID);
+    if (it != this->systemRegistry.end())
+    {
+        SystemPriority oldPriority = it->second->systemPriority;
+
+        if (oldPriority == newPriority)
+            return;
+
+        it->second->systemPriority = newPriority;
+
+        // re-build system work order
+        // this->UpdateSystemWorkOrder();
+    }
+    else
+    {
+        LogWarning("Trying to change system's [%d] priority, but system is "
+                   "not registered yet.",
+                   STID);
+    }
+}
+template <class T>
+T* SystemManager::GetSystem() const
+{
+    auto it = this->systemRegistry.find(T::STATIC_SYSTEM_TYPE_ID);
+    return it != this->systemRegistry.end() ? (T*)it->second : nullptr;
+}
+template <class... ActiveSystems>
+SystemWorkStateMask SystemManager::GenerateActiveSystemWorkState(
+    ActiveSystems&&... activeSystems)
+{
+    SystemWorkStateMask mask(this->systemWorkOrder.size(), false);
+    std::list<ISystem*> AS = { activeSystems... };
+    for (auto s : AS)
+    {
+        for (int i = 0; i < this->systemWorkOrder.size(); ++i)
+        {
+            if (this->systemWorkOrder[i]->GetStaticSystemTypeID() ==
+                s->GetStaticSystemTypeID())
+            {
+                mask[i] = true;
+                break;
+            }
+        }
+    }
+    return mask;
 }
 
 } // namespace ecs

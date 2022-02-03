@@ -10,7 +10,6 @@ namespace ecs
 template <class T>
 class Component : public IComponent
 {
-
 public:
     static const ComponentTypeId STATIC_COMPONENT_TYPE_ID;
 

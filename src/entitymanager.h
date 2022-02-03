@@ -2,10 +2,10 @@
 #define ECS_ENTITYMANAGER_H
 
 #include "api.h"
+#include "componentmanager.h"
 #include "engine.h"
-#include "ientity.h"
-#include "componentmanager.h
 #include "handle.h"
+#include "ientity.h"
 #include "memorychunkallocator.h"
 
 namespace ecs
@@ -24,7 +24,6 @@ class ECS_API EntityManager
         virtual const char* GetEntityContainerTypeName() const = 0;
 
         virtual void DestroyEntity(IEntity* object) = 0;
-
     }; // class IEntityContainer
 
     /**
@@ -36,18 +35,18 @@ class ECS_API EntityManager
         : public memory::MemoryChunkAllocator<T, ENITY_T_CHUNK_SIZE>,
           public IEntityContainer
     {
-
-        EntityContainer(const EntityContainer&) = delete;
-        EntityContainer& operator=(EntityContainer&) = delete;
-
     public:
         EntityContainer()
             : MemoryChunkAllocator("EntityManager")
         {
         }
-
         virtual ~EntityContainer() {}
 
+    private:
+        EntityContainer(const EntityContainer&) = delete;
+        EntityContainer& operator=(EntityContainer&) = delete;
+
+    public:
         virtual const char* GetEntityContainerTypeName() const override
         {
             static const char* ENTITY_TYPE_NAME{ typeid(T).name() };
@@ -56,53 +55,60 @@ class ECS_API EntityManager
 
         virtual void DestroyEntity(IEntity* object) override
         {
-            // call d'tor
             object->~IEntity();
-
             this->DestroyObject(object);
         }
 
     }; // EntityContainer
 
-    using EntityRegistry = std::unordered_map<EntityTypeId, IEntityContainer*>;
-    EntityRegistry m_EntityRegistry;
-
-    using PendingDestroyedEntities = std::vector<EntityId>;
-    PendingDestroyedEntities m_PendingDestroyedEntities;
-    size_t                   m_NumPendingDestroyedEntities;
-
-    ComponentManager* m_ComponentManagerInstance;
+public:
+    EntityManager(ComponentManager* componentManagerInstance);
+    ~EntityManager();
 
 private:
     EntityManager(const EntityManager&) = delete;
     EntityManager& operator=(EntityManager&) = delete;
 
-    EntityHandleTable m_EntityHandleTable;
+public:
+    /**
+     * Creates an entity of type T and returns its id.
+     * @tparam T - Generic type parameter.
+     * @tparam ARGS - Type of the arguments.
+     * @param args - Variable arguments providing [in,out] The arguments.
+     * @return The new entity.
+     */
+    template <class T, class... ARGS>
+    EntityId CreateEntity(ARGS&&... args);
 
+    void DestroyEntity(EntityId entityId);
+
+    /**
+     * Get an entity object by its id.
+     * @param entityId - The identifier.
+     * @return Null if it fails, else the entity.
+     */
+    inline IEntity* GetEntity(EntityId entityId);
+
+    /**
+     * Gets the currently stored entity identifier at the given index.
+     * @param index - Zero-based index of the.
+     * @return The entity identifier.
+     */
+    inline EntityId GetEntityId(EntityId::value_type index) const;
+
+    /**
+     * Removes all destroyed entities.
+     */
+    void RemoveDestroyedEntities();
+
+private:
     /**
      * Returns/Creates an entity container for entities of type T.
      * @tparam T - Generic type parameter.
      * @return Null if it fails, else the entity container.
      */
     template <class T>
-    inline EntityContainer<T>* GetEntityContainer()
-    {
-        EntityTypeId EID = T::STATIC_ENTITY_TYPE_ID;
-
-        auto                it = this->m_EntityRegistry.find(EID);
-        EntityContainer<T>* ec = nullptr;
-
-        if (it == this->m_EntityRegistry.end())
-        {
-            ec                          = new EntityContainer<T>();
-            this->m_EntityRegistry[EID] = ec;
-        }
-        else
-            ec = (EntityContainer<T>*)it->second;
-
-        assert(ec != nullptr && "Failed to create EntityContainer<T>!");
-        return ec;
-    }
+    inline EntityContainer<T>* GetEntityContainer();
 
     /**
      * Aqcuire entity identifier. This method will be used by IEntity class
@@ -118,78 +124,14 @@ private:
      */
     void ReleaseEntityId(EntityId id);
 
-public:
-    EntityManager(ComponentManager* componentManagerInstance);
-    ~EntityManager();
-
-    /**
-     * Creates an entity of type T and returns its id.
-     * @tparam T - Generic type parameter.
-     * @tparam ARGS - Type of the arguments.
-     * @param args - Variable arguments providing [in,out] The arguments.
-     * @return The new entity.
-     */
-    template <class T, class... ARGS>
-    EntityId CreateEntity(ARGS&&... args)
-    {
-        // aqcuire memory for new entity object of type T
-        void* pObjectMemory = GetEntityContainer<T>()->CreateObject();
-
-        ecs::EntityId entityId = this->AqcuireEntityId((T*)pObjectMemory);
-
-        ((T*)pObjectMemory)->m_EntityID = entityId;
-        ((T*)pObjectMemory)->m_ComponentManagerInstance =
-            this->m_ComponentManagerInstance;
-
-        // create entity inplace
-        IEntity* entity = new (pObjectMemory) T(std::forward<ARGS>(args)...);
-
-        return entityId;
-    }
-
-    void DestroyEntity(EntityId entityId)
-    {
-        IEntity* entity = this->m_EntityHandleTable[entityId];
-
-        const EntityTypeId ETID = entity->GetStaticEntityTypeID();
-
-        if (this->m_NumPendingDestroyedEntities <
-            this->m_PendingDestroyedEntities.size())
-        {
-            this->m_PendingDestroyedEntities
-                [this->m_NumPendingDestroyedEntities++] = entityId;
-        }
-        else
-        {
-            this->m_PendingDestroyedEntities.push_back(entityId);
-            this->m_NumPendingDestroyedEntities++;
-        }
-    }
-
-    /**
-     * Get an entity object by its id.
-     * @param entityId - The identifier.
-     * @return Null if it fails, else the entity.
-     */
-    inline IEntity* GetEntity(EntityId entityId)
-    {
-        return this->m_EntityHandleTable[entityId];
-    }
-
-    /**
-     * Gets the currently stored entity identifier at the given index.
-     * @param index - Zero-based index of the.
-     * @return The entity identifier.
-     */
-    inline EntityId GetEntityId(EntityId::value_type index) const
-    {
-        return this->m_EntityHandleTable[index];
-    }
-
-    /**
-     * Removes all destroyed entities.
-     */
-    void RemoveDestroyedEntities();
+private:
+    using EntityRegistry = std::unordered_map<EntityTypeId, IEntityContainer*>;
+    using PendingDestroyedEntities = std::vector<EntityId>;
+    EntityRegistry           entityRegistry;
+    PendingDestroyedEntities pendingDestroyedEntities;
+    size_t                   numPendingDestroyedEntities;
+    ComponentManager*        componentManager;
+    EntityHandleTable        entityHandleTable;
 };
 
 } // namespace ecs

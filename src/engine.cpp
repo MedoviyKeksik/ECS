@@ -13,45 +13,45 @@ namespace ecs
 
 EcsEngine::EcsEngine()
 {
-    ECS_EngineTime       = new util::Timer();
-    ECS_EventHandler     = new event::EventHandler();
-    ECS_SystemManager    = new SystemManager();
-    ECS_ComponentManager = new ComponentManager();
-    ECS_EntityManager    = new EntityManager(this->ECS_ComponentManager);
+    ecsEngineTime        = new util::Timer();
+    ecsEventHandler      = new event::EventHandler();
+    ecsSystemManager     = new SystemManager();
+    ecsComponentManager  = new ComponentManager();
+    ecsEntityManager     = new EntityManager(this->ecsComponentManager);
 }
 
 EcsEngine::~EcsEngine()
 {
-    delete ECS_EntityManager;
-    ECS_EntityManager = nullptr;
+    delete ecsEntityManager;
+    ecsEntityManager = nullptr;
 
-    delete ECS_ComponentManager;
-    ECS_ComponentManager = nullptr;
+    delete ecsComponentManager;
+    ecsComponentManager = nullptr;
 
-    delete ECS_SystemManager;
-    ECS_SystemManager = nullptr;
+    delete ecsSystemManager;
+    ecsSystemManager = nullptr;
 
-    delete ECS_EventHandler;
-    ECS_EventHandler = nullptr;
+    delete ecsEventHandler;
+    ecsEventHandler = nullptr;
 }
 
 void EcsEngine::Update(f32 tick_ms)
 {
     // Advance engine time
-    ECS_EngineTime->Tick(tick_ms);
+    ecsEngineTime->Tick(tick_ms);
 
     // Update all running systems
-    ECS_SystemManager->Update(tick_ms);
-    ECS_EventHandler->DispatchEvents();
+    ecsSystemManager->Update(tick_ms);
+    ecsEventHandler->DispatchEvents();
 
     // Finalize pending destroyed entities
-    ECS_EntityManager->RemoveDestroyedEntities();
-    ECS_EventHandler->DispatchEvents();
+    ecsEntityManager->RemoveDestroyedEntities();
+    ecsEventHandler->DispatchEvents();
 }
 
 void EcsEngine::UnsubscribeEvent(event::internal::IEventDelegate* eventDelegate)
 {
-    ECS_EventHandler->RemoveEventCallback(eventDelegate);
+    ecsEventHandler->RemoveEventCallback(eventDelegate);
 }
 
 } // namespace ecs

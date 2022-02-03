@@ -17,40 +17,34 @@ class ECS_API IComponent
 {
     friend class ComponentManager;
 
-protected:
-    ComponentId m_HashValue;
-
-    ComponentId m_ComponentID;
-
-    EntityId m_Owner;
-
-    bool m_Enabled;
-
 public:
     IComponent();
-
     virtual ~IComponent();
 
-    // COMPARE
     inline const bool operator==(const IComponent& other) const
     {
-        return m_HashValue == other.m_HashValue;
+        return hashValue == other.hashValue;
     }
     inline const bool operator!=(const IComponent& other) const
     {
-        return m_HashValue == other.m_HashValue;
+        return hashValue == other.hashValue;
     }
 
-    // ACCESSOR
     inline const ComponentId GetComponentId() const
     {
-        return this->m_ComponentID;
+        return this->componentId;
     }
 
-    inline const EntityId GetOwner() const { return this->m_Owner; }
+    inline const EntityId GetOwner() const { return this->owner; }
 
-    inline void SetActive(bool state) { this->m_Enabled = state; }
-    inline bool IsActive() const { return this->m_Enabled; }
+    inline void SetActive(bool state) { this->enabled = state; }
+    inline bool IsActive() const { return this->enabled; }
+
+protected:
+    ComponentId hashValue;
+    ComponentId componentId;
+    EntityId    owner;
+    bool        enabled;
 };
 } // namespace ecs
 

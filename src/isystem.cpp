@@ -4,9 +4,9 @@ namespace ecs
 {
 
 ISystem::ISystem(SystemPriority priority, f32 updateInterval_ms)
-    : m_Priority(priority)
-    , m_UpdateInterval(updateInterval_ms)
-    , m_Enabled(true)
+    : systemPriority(priority)
+    , updateInterval(updateInterval_ms)
+    , isEnabled(true)
 {
 }
 

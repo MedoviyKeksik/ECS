@@ -4,7 +4,7 @@ namespace ecs
 {
 IComponent::IComponent()
     : m_Owner(INVALID_ENTITY_ID)
-    , m_Enabled(true)
+    , enabled(true)
 {
 }
 

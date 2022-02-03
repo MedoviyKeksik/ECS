@@ -14,12 +14,17 @@ namespace ecs
 template <class E>
 class Entity : public IEntity
 {
+public:
+    static const EntityTypeId STATIC_ENTITY_TYPE_ID;
+
+    Entity() {}
+
+    virtual ~Entity() {}
+
+private:
     // Entity destruction always happens through EntityManager !!!
     void operator delete(void*)   = delete;
     void operator delete[](void*) = delete;
-
-public:
-    static const EntityTypeId STATIC_ENTITY_TYPE_ID;
 
 public:
     virtual const EntityTypeId GetStaticEntityTypeID() const override
@@ -27,9 +32,6 @@ public:
         return STATIC_ENTITY_TYPE_ID;
     }
 
-    Entity() {}
-
-    virtual ~Entity() {}
 };
 
 // set unique type id for this Entity<T>

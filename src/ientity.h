@@ -32,28 +32,28 @@ public:
 
     inline bool operator==(const IEntity& rhs) const
     {
-        return this->m_EntityID == rhs.m_EntityID;
+        return this->entityId == rhs.entityId;
     }
     inline bool operator!=(const IEntity& rhs) const
     {
-        return this->m_EntityID != rhs.m_EntityID;
+        return this->entityId != rhs.entityId;
     }
     inline bool operator==(const IEntity* rhs) const
     {
-        return this->m_EntityID == rhs->m_EntityID;
+        return this->entityId == rhs->entityId;
     }
     inline bool operator!=(const IEntity* rhs) const
     {
-        return this->m_EntityID != rhs->m_EntityID;
+        return this->entityId != rhs->entityId;
     }
 
     virtual const EntityTypeId GetStaticEntityTypeID() const = 0;
 
-    inline const EntityId GetEntityID() const { return this->m_EntityID; }
+    inline const EntityId GetEntityID() const { return this->entityId; }
 
     void SetActive(bool active);
 
-    inline bool IsActive() const { return this->m_Active; }
+    inline bool IsActive() const { return this->isActive; }
 
 private:
     // set on create; in EntityManager
@@ -61,10 +61,8 @@ private:
 
 protected:
     DECLARE_STATIC_LOGGER
-    // set on create; in EntityManager
-    EntityId m_EntityID;
-    // if false, entity won't be updated
-    bool m_Active;
+    EntityId entityId; // set on create; in EntityManager
+    bool isActive;   // if false, entity won't be updated
 };
 
 } // namespace ecs
