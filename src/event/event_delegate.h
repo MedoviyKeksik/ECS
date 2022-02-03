@@ -1,9 +1,9 @@
-#ifndef IEVENTDELEGATE_H
-#define IEVENTDELEGATE_H
+#pragma once
 
 #include <typeinfo>
 
 #include "../util/global.hpp"
+#include "ieventdelegate.h"
 
 namespace ecs
 {
@@ -13,29 +13,11 @@ class IEvent;
 
 namespace internal
 {
-using EventDelegateId = std::size_t;
-
-class IEventDelegate
-{
-public:
-    IEventDelegate()          = default;
-    virtual ~IEventDelegate() = default;
-
-    virtual inline void            invoke(const IEvent* const e)          = 0;
-    virtual inline EventDelegateId GetDelegateId() const                  = 0;
-    virtual inline u64             GetStaticEventTypeId() const           = 0;
-    virtual bool            operator==(const IEventDelegate* other) const = 0;
-    virtual IEventDelegate* clone()                                       = 0;
-
-}; //  IEventDelegate;
 
 template <typename Class, typename EventType>
 class EventDelegate : public IEventDelegate
 {
     typedef void (Class::*Callback)(const EventType* const);
-
-    Class*   receiver;
-    Callback callback;
 
 public:
     EventDelegate(Class* receiver, Callback& callbackFunction)
@@ -86,10 +68,24 @@ public:
         return ((this->callback == delegate->callback) &&
                 (this->receiver == delegate->receiver));
     }
+
+private:
+    inline void  SetReceiver(Class* receiver) { this->receiver = receiver; }
+    inline auto& GetReceiver() { return this->receiver; }
+    inline const auto& GetReceiver() const { return this->receiver; }
+
+    inline void SetCallback(const Callback& callback)
+    {
+        this->callback = callback;
+    }
+    inline auto&       GetCallback() { return this->callback; }
+    inline const auto& GetCallback() const { return this->callback; }
+
+private:
+    Class*   receiver;
+    Callback callback;
 };
 
 } // namespace internal
 } // namespace event
 } // namespace ecs
-
-#endif // IEVENTDELEGATE_H

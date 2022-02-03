@@ -15,11 +15,22 @@ class IEvent
 {
 public:
     IEvent(EventTypeId typeId);
+    virtual ~IEvent();
 
-    inline const EventTypeId    GetEventTypeID() const { return this->typeId; }
-    inline const EventTimeStamp GetTimeCreated() const
+    inline const auto& GetTypeID() const { return this->typeId; }
+    inline auto&       GetTypeID() { return this->typeId; }
+    inline const auto& GetTimeCreated() const { return this->timeCreated; }
+    inline auto&       GetTimeCreated() { return this->timeCreated; }
+
+private:
+    inline void SetTypeID(const EventTypeId eventTypeID)
     {
-        return this->timeCreated;
+        this->typeId = eventTypeID;
+    }
+
+    inline void SetTimeCreated(const EventTimeStamp timeCreated)
+    {
+        this->timeCreated = timeCreated;
     }
 
 private:

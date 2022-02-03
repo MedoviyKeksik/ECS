@@ -1,5 +1,4 @@
-#ifndef IEVENTDISPATCHER_H
-#define IEVENTDISPATCHER_H
+#pragma once
 
 #include "ieventdelegate.h"
 
@@ -31,5 +30,3 @@ public:
 } // namespace internal
 } // namespace event
 } // namespace ecs
-
-#endif // IEVENTDISPATCHER_H
