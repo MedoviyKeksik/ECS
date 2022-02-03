@@ -3,7 +3,7 @@
 namespace ecs
 {
 IComponent::IComponent()
-    : m_Owner(INVALID_ENTITY_ID)
+    : owner(INVALID_ENTITY_ID)
     , enabled(true)
 {
 }

@@ -16,8 +16,7 @@ SystemManager::SystemManager()
 
 SystemManager::~SystemManager()
 {
-    for (SystemWorkOrder::reverse_iterator it =
-             this->systemWorkOrder.rbegin();
+    for (SystemWorkOrder::reverse_iterator it = this->systemWorkOrder.rbegin();
          it != this->systemWorkOrder.rend();
          ++it)
     {
@@ -82,38 +81,38 @@ void SystemManager::UpdateSystemWorkOrder()
                                     std::vector<int>&,
                                     const std::vector<std::vector<bool>>&,
                                     std::vector<SystemTypeId>&)>
-        DFS = [&](SystemTypeId                          vertex,
-                  std::vector<int>&                     VERTEX_STATE,
-                  const std::vector<std::vector<bool>>& EDGES,
+        dfs = [&](SystemTypeId                          vertex,
+                  std::vector<int>&                     vertexState,
+                  const std::vector<std::vector<bool>>& edges,
                   std::vector<SystemTypeId>&            output)
     {
-        VERTEX_STATE[vertex] = 1; // visited
+        vertexState[vertex] = 1; // visited
 
-        for (int i = 0; i < VERTEX_STATE.size(); ++i)
+        for (int i = 0; i < vertexState.size(); ++i)
         {
-            if (EDGES[i][vertex] == true && VERTEX_STATE[i] == 0)
-                DFS(i, VERTEX_STATE, EDGES, output);
+            if (edges[i][vertex] == true && vertexState[i] == 0)
+                dfs(i, vertexState, edges, output);
         }
 
-        VERTEX_STATE[vertex] = 2; // done
+        vertexState[vertex] = 2; // done
         output.push_back(vertex);
     };
 
     const size_t NUM_SYSTEMS = this->systemDependencyMatrix.size();
 
     // create index array
-    std::vector<int> INDICES(NUM_SYSTEMS);
+    std::vector<int> indices(NUM_SYSTEMS);
     for (int i = 0; i < NUM_SYSTEMS; ++i)
-        INDICES[i] = i;
+        indices[i] = i;
 
     // determine vertex-groups
-    std::vector<std::vector<SystemTypeId>> VERTEX_GROUPS;
-    std::vector<SystemPriority>            GROUP_PRIORITY;
+    std::vector<std::vector<SystemTypeId>> vertexGroups;
+    std::vector<SystemPriority>            groupPriority;
 
-    while (INDICES.empty() == false)
+    while (indices.empty() == false)
     {
-        SystemTypeId index = INDICES.back();
-        INDICES.pop_back();
+        SystemTypeId index = indices.back();
+        indices.pop_back();
 
         if (index == -1)
             continue;
@@ -121,7 +120,7 @@ void SystemManager::UpdateSystemWorkOrder()
         std::vector<SystemTypeId> group;
         std::vector<SystemTypeId> member;
 
-        SystemPriority groupPriority = LOWEST_SYSTEM_PRIORITY;
+        SystemPriority currentGroupPriority = LOWEST_SYSTEM_PRIORITY;
         member.push_back(index);
 
         while (member.empty() == false)
@@ -129,56 +128,55 @@ void SystemManager::UpdateSystemWorkOrder()
             index = member.back();
             member.pop_back();
 
-            for (int i = 0; i < INDICES.size(); ++i)
+            for (int i = 0; i < indices.size(); ++i)
             {
-                if (INDICES[i] != -1 &&
+                if (indices[i] != -1 &&
                     (this->systemDependencyMatrix[i][index] == true ||
                      this->systemDependencyMatrix[index][i] == true))
                 {
                     member.push_back(i);
-                    INDICES[i] = -1;
+                    indices[i] = -1;
                 }
             }
 
             group.push_back(index);
 
-            ISystem* sys  = this->systemRegistry[index];
-            groupPriority = std::max(
+            ISystem* sys         = this->systemRegistry[index];
+            currentGroupPriority = std::max(
                 (sys != nullptr ? sys->systemPriority : NORMAL_SYSTEM_PRIORITY),
-                groupPriority);
+                currentGroupPriority);
         }
 
-        VERTEX_GROUPS.push_back(group);
-        GROUP_PRIORITY.push_back(groupPriority);
+        vertexGroups.push_back(group);
+        groupPriority.push_back(currentGroupPriority);
     }
 
-    const size_t NUM_VERTEX_GROUPS = VERTEX_GROUPS.size();
+    const size_t numVertexGroups = vertexGroups.size();
 
     // do a topological sort on groups w.r.t. to groups priority!
     std::vector<int> vertex_states(NUM_SYSTEMS, 0);
 
-    std::multimap<SystemPriority, std::vector<SystemTypeId>>
-        VERTEX_GROUPS_SORTED;
+    std::multimap<SystemPriority, std::vector<SystemTypeId>> vertexGroupsSorted;
 
-    for (int i = 0; i < NUM_VERTEX_GROUPS; ++i)
+    for (int i = 0; i < numVertexGroups; ++i)
     {
-        auto g = VERTEX_GROUPS[i];
+        auto g = vertexGroups[i];
 
         std::vector<SystemTypeId> order;
 
         for (int i = 0; i < g.size(); ++i)
         {
             if (vertex_states[g[i]] == 0)
-                DFS(g[i], vertex_states, this->systemDependencyMatrix, order);
+                dfs(g[i], vertex_states, this->systemDependencyMatrix, order);
         }
 
         std::reverse(order.begin(), order.end());
 
         // note: MAX - PRIORITY will frce the correct sorting behaviour in
         // multimap (by default a multimap sorts int values from low to high)
-        VERTEX_GROUPS_SORTED.insert(
+        vertexGroupsSorted.insert(
             std::pair<SystemPriority, std::vector<SystemTypeId>>(
-                std::numeric_limits<SystemPriority>::max() - GROUP_PRIORITY[i],
+                std::numeric_limits<SystemPriority>::max() - groupPriority[i],
                 order));
     }
 
@@ -186,7 +184,7 @@ void SystemManager::UpdateSystemWorkOrder()
 
         // re-build system work order
         this->systemWorkOrder.clear();
-    for (auto group : VERTEX_GROUPS_SORTED)
+    for (auto group : vertexGroupsSorted)
     {
         for (auto m : group.second)
         {
@@ -226,11 +224,11 @@ void SystemManager::SetSystemWorkState(SystemWorkStateMask mask)
 template <class T, class... ARGS>
 T* SystemManager::AddSystem(ARGS&&... systemArgs)
 {
-    const u64 STID = T::STATIC_SYSTEM_TYPE_ID;
+    const u64 staticSystemTypeId = T::STATIC_SYSTEM_TYPE_ID;
 
     // avoid multiple registrations of the same system
-    auto it = this->systemRegistry.find(STID);
-    if ((this->systemRegistry.find(STID) != this->systemRegistry.end()) &&
+    auto it = this->systemRegistry.find(staticSystemTypeId);
+    if ((this->systemRegistry.find(staticSystemTypeId) != this->systemRegistry.end()) &&
         (it->second != nullptr))
         return (T*)it->second;
 
@@ -243,7 +241,7 @@ T* SystemManager::AddSystem(ARGS&&... systemArgs)
 
         // create new system
         system = new (pSystemMem) T(std::forward<ARGS>(systemArgs)...);
-        this->systemRegistry[STID] = system;
+        this->systemRegistry[staticSystemTypeId] = system;
 
         LogInfo(
             "System \'%s\' (%d bytes) created.", typeid(T).name(), sizeof(T));
@@ -257,11 +255,11 @@ T* SystemManager::AddSystem(ARGS&&... systemArgs)
     }
 
     // resize dependency matrix
-    if (STID + 1 > this->systemDependencyMatrix.size())
+    if (staticSystemTypeId + 1 > this->systemDependencyMatrix.size())
     {
-        this->systemDependencyMatrix.resize(STID + 1);
+        this->systemDependencyMatrix.resize(staticSystemTypeId + 1);
         for (int i = 0; i < this->systemDependencyMatrix.size(); ++i)
-            this->systemDependencyMatrix[i].resize(STID + 1);
+            this->systemDependencyMatrix[i].resize(staticSystemTypeId + 1);
     }
 
     // add to work list

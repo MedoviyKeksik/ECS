@@ -8,13 +8,13 @@ ComponentManager::ComponentManager()
     DEFINE_LOGGER("ComponentManager")
     LogInfo("Initialize ComponentManager!");
 
-    const size_t NUM_COMPONENTS{
+    const size_t numComponents{
         util::internal::FamilyTypeID<IComponent>::Get()
     };
 
     this->entityComponentMap.resize(ENITY_LUT_GROW);
     for (auto i = 0; i < ENITY_LUT_GROW; ++i)
-        this->entityComponentMap[i].resize(NUM_COMPONENTS,
+        this->entityComponentMap[i].resize(numComponents,
                                              INVALID_COMPONENT_ID);
 }
 
@@ -62,7 +62,7 @@ void ComponentManager::MapEntityComponent(EntityId        entityId,
                                           ComponentId     componentId,
                                           ComponentTypeId componentTypeId)
 {
-    static const size_t NUM_COMPONENTS{
+    static const size_t numComponents{
         util::Internal::FamilyTypeID<IComponent>::Get()
     };
 
@@ -76,7 +76,7 @@ void ComponentManager::MapEntityComponent(EntityId        entityId,
         this->entityComponentMap.resize(newSize);
 
         for (auto i = oldSize; i < newSize; ++i)
-            this->entityComponentMap[i].resize(NUM_COMPONENTS,
+            this->entityComponentMap[i].resize(numComponents,
                                                  INVALID_COMPONENT_ID);
     }
 
@@ -104,7 +104,7 @@ template <class T, class... ARGS>
 T* ComponentManager::AddComponent(const EntityId entityId, ARGS&&... args)
 {
     // hash operator for hashing entity and component ids
-    static constexpr std::hash<ComponentId> ENTITY_COMPONENT_ID_HASHER{
+    static constexpr std::hash<ComponentId> entityComponentIdHasher{
         std::hash<ComponentId>()
     };
 
@@ -120,8 +120,8 @@ T* ComponentManager::AddComponent(const EntityId entityId, ARGS&&... args)
     IComponent* component = new (pObjectMemory) T(std::forward<ARGS>(args)...);
 
     component->owner       = entityId;
-    component->hashValue   = ENTITY_COMPONENT_ID_HASHER(entityId) ^
-                             (ENTITY_COMPONENT_ID_HASHER(componentId) << 1);
+    component->hashValue   = entityComponentIdHasher(entityId) ^
+                             (entityComponentIdHasher(componentId) << 1);
 
     // create mapping from entity id its component id
     MapEntityComponent(entityId, componentId, CTID);
@@ -132,10 +132,10 @@ T* ComponentManager::AddComponent(const EntityId entityId, ARGS&&... args)
 template <class T>
 void ComponentManager::RemoveComponent(const EntityId entityId)
 {
-    const ComponentTypeId CTID = T::STATIC_COMPONENT_TYPE_ID;
+    const ComponentTypeId componentTypeId = T::STATIC_COMPONENT_TYPE_ID;
 
     const ComponentId componentId =
-        this->entityComponentMap[entityId.index][CTID];
+        this->entityComponentMap[entityId.index][componentTypeId];
 
     IComponent* component = this->componentLookupTable[componentId];
 
@@ -146,14 +146,14 @@ void ComponentManager::RemoveComponent(const EntityId entityId)
     GetComponentContainer<T>()->DestroyObject(component);
 
     // unmap entity id to component id
-    UnmapEntityComponent(entityId, componentId, CTID);
+    UnmapEntityComponent(entityId, componentId, componentTypeId);
 }
 
 void ComponentManager::RemoveAllComponents(const EntityId entityId)
 {
-    static const size_t NUM_COMPONENTS = this->entityComponentMap[0].size();
+    static const size_t numComponents = this->entityComponentMap[0].size();
 
-    for (ComponentTypeId componentTypeId = 0; componentTypeId < NUM_COMPONENTS;
+    for (ComponentTypeId componentTypeId = 0; componentTypeId < numComponents;
          ++componentTypeId)
     {
         const ComponentId componentId =
@@ -181,10 +181,10 @@ void ComponentManager::RemoveAllComponents(const EntityId entityId)
 template <class T>
 T* ComponentManager::GetComponent(const EntityId entityId)
 {
-    const ComponentTypeId CTID = T::STATIC_COMPONENT_TYPE_ID;
+    const ComponentTypeId componentTypeId = T::STATIC_COMPONENT_TYPE_ID;
 
     const ComponentId componentId =
-        this->entityComponentMap[entityId.index][CTID];
+        this->entityComponentMap[entityId.index][componentTypeId];
 
     // entity has no component of type T
     if (componentId == INVALID_COMPONENT_ID)
@@ -210,15 +210,15 @@ ComponentManager::ComponentContainer<T>*
 ComponentManager::GetComponentContainer()
 {
 
-    ComponentTypeId CID = T::STATIC_COMPONENT_TYPE_ID;
+    ComponentTypeId componentTypeId = T::STATIC_COMPONENT_TYPE_ID;
 
-    auto                   it = this->componentContainerRegistry.find(CID);
+    auto                   it = this->componentContainerRegistry.find(componentTypeId);
     ComponentContainer<T>* cc = nullptr;
 
     if (it == this->componentContainerRegistry.end())
     {
         cc                                    = new ComponentContainer<T>();
-        this->componentContainerRegistry[CID] = cc;
+        this->componentContainerRegistry[componentTypeId] = cc;
     }
     else
         cc = static_cast<ComponentContainer<T>*>(it->second);

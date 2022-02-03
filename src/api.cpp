@@ -27,12 +27,12 @@ namespace memory
 namespace internal
 {
 
-MemoryManager* EcsMemoryManager = new memory::internal::MemoryManager();
+MemoryManager* ecsMemoryManager = new memory::internal::MemoryManager();
 
 } // namespace internal
 
 GlobalMemoryUser::GlobalMemoryUser()
-    : ecsMemoryManager(internal::EcsMemoryManager)
+    : ecsMemoryManager(internal::ecsMemoryManager)
 {
 }
 
@@ -40,12 +40,12 @@ GlobalMemoryUser::~GlobalMemoryUser() {}
 
 inline const void* GlobalMemoryUser::Allocate(size_t memSize, const char* user)
 {
-    return ECS_MEMORY_MANAGER->Allocate(memSize, user);
+    return internal::ecsMemoryManager->Allocate(memSize, user);
 }
 
 inline void GlobalMemoryUser::Free(void* pMem)
 {
-    ECS_MEMORY_MANAGER->Free(pMem);
+    internal::ecsMemoryManager->Free(pMem);
 }
 
 } // namespace memory
@@ -67,6 +67,6 @@ void Terminate()
     }
 
     // check for memory leaks
-    memory::internal::ECSMemoryManager->CheckMemoryLeaks();
+    memory::internal::ecsMemoryManager->CheckMemoryLeaks();
 }
 } // namespace ecs
