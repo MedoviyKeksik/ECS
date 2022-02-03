@@ -1,5 +1,4 @@
-#ifndef EVENTDISPATCHER_H
-#define EVENTDISPATCHER_H
+#pragma once
 
 #include <list>
 
@@ -29,27 +28,33 @@ public:
     virtual std::size_t GetEventCallbackCount() const override;
 
 private:
-    void SetPendingRemoveDelegates(
+    inline void SetPendingRemoveDelegates(
         const PendingRemoveDelegates& pendingRemoveDelegates)
     {
         this->pendingRemoveDelegates = pendingRemoveDelegates;
     }
-    auto& GetPendingRemoveDelegates() { return this->pendingRemoveDelegates; }
-    const auto& GetPendingRemoveDelegates() const
+    inline auto& GetPendingRemoveDelegates()
+    {
+        return this->pendingRemoveDelegates;
+    }
+    inline const auto& GetPendingRemoveDelegates() const
     {
         return this->pendingRemoveDelegates;
     }
 
-    void SetEventCallbacks(const EventDelegateList& eventCallbacks)
+    inline void SetEventCallbacks(const EventDelegateList& eventCallbacks)
     {
         this->eventCallbacks = eventCallbacks;
     }
-    auto&       GetEventCallbacks() { return this->eventCallbacks; }
-    const auto& GetEventCallbacks() const { return this->eventCallbacks; }
+    inline auto&       GetEventCallbacks() { return this->eventCallbacks; }
+    inline const auto& GetEventCallbacks() const
+    {
+        return this->eventCallbacks;
+    }
 
-    void        SetLocked(bool locked) { this->locked = locked; }
-    auto&       GetLocked() { return this->locked; }
-    const auto& GetLocked() const { return this->locked; }
+    inline void        SetLocked(bool locked) { this->locked = locked; }
+    inline auto&       GetLocked() { return this->locked; }
+    inline const auto& GetLocked() const { return this->locked; }
 
 private:
     PendingRemoveDelegates pendingRemoveDelegates;
@@ -60,5 +65,3 @@ private:
 } // namespace internal
 } // namespace event
 } // namespace ecs
-
-#endif // EVENTDISPATCHER_H
