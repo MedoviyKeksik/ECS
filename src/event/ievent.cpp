@@ -2,9 +2,15 @@
 
 #include <cassert>
 
+#include "../engine.h"
+
 ecs::event::IEvent::IEvent(EventTypeId typeId)
-    : m_typeId(typeId)
+    : typeId(typeId)
 {
+    int* ECS_Engine= nullptr;
     assert(ECS_Engine != nullptr && "ECS engine not initialized!");
-    this->m_timeCreated = ECS_Engine->ECS_EngineTimeStamp();
+      
+    this->timeCreated = ECS_Engine->ECS_EngineTimeStamp();
 }
+
+ecs::event::IEvent::~IEvent() {}

@@ -40,6 +40,7 @@ private:
 
 public:
     inline EntityManager*    GetEntityManager() { return ecsEntityManager; }
+
     inline ComponentManager* GetComponentManager()
     {
         return ecsComponentManager;

@@ -1,5 +1,4 @@
-#ifndef ECS_PLATFORM_H
-#define ECS_PLATFORM_H
+#pragma once
 
 #ifdef ECS_EXPORT
 #define ECS_API __declspec(dllexport)
@@ -89,7 +88,8 @@ union TimeStamp
     {
     }
 
-    TimeStamp(f32 floatValue)
+
+    explicit TimeStamp(f32 floatValue)
         : asFloat(floatValue)
     {
     }
@@ -110,12 +110,9 @@ union TimeStamp
         return this->asFloat < other.asFloat;
     }
     inline const bool operator>(const TimeStamp& other) const
-    {
         return this->asFloat > other.asFloat;
     }
 
 }; // union TimeStamp
 
 } // namespace ecs
-
-#endif // ECS_PLATFORM_H

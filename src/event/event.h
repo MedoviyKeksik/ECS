@@ -1,5 +1,4 @@
-#ifndef EVENT_H
-#define EVENT_H
+#pragma once
 
 #include <typeinfo>
 
@@ -26,5 +25,3 @@ const EventTypeId Event<T>::STATIC_EVENT_TYPE_ID{ typeid(T).hash_code() };
 
 } // namespace event
 } // namespace ecs
-
-#endif
