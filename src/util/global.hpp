@@ -75,7 +75,7 @@ class MemoryManager;
 class GlobalMemoryUser
 {
 private:
-    Internal::MemoryManager* ECS_MEMORY_MANAGER;
+    Internal::MemoryManager* ecsMemoryManager;
 
 public:
     GlobalMemoryUser();

@@ -1,43 +1,47 @@
 #ifndef ECS_API_H
 #define ECS_API_H
 
-#pragma once
-
 #define ENITY_LUT_GROW 1024
-
 #define ENITY_T_CHUNK_SIZE 512
-
 #define COMPONENT_LUT_GROW 1024
-
 #define COMPONENT_T_CHUNK_SIZE 512
-
 // 4MB
 #define ECS_EVENT_MEMORY_BUFFER_SIZE 4194304
-
 // 8MB
 #define ECS_SYSTEM_MEMORY_BUFFER_SIZE 8388608
 
+#include "logger.h"
 #include "platform.h"
-#include "log/logger.h"
 
 namespace ecs
 {
-namespace log::internal
+namespace log
+{
+namespace internal
 {
 #if !ECS_DISABLE_LOGGING
 
 class LoggerManager;
 extern LoggerManager* ECSLoggerManager;
 
-log::Logger* GetLogger(const char* logger);
+/**
+ * Returns a log4cpp managed logger instance.
+ * @param logger - The logger.
+ * @return Null if it fails, else the logger.
+ */
+ECS_API log::Logger* GetLogger(const char* logger);
 #endif
-} // namespace log::internal
+} // namespace internal
+} // namespace log
 
-namespace memory::internal
+namespace memory
+{
+namespace internal
 {
 class MemoryManager;
 extern MemoryManager* ECSMemoryManager;
-} // namespace memory::internal
+} // namespace internal
+} // namespace memory
 
 namespace event
 {
@@ -50,27 +54,28 @@ class ComponentManager;
 
 namespace memory
 {
-class GlobalMemoryUser
+/**
+ * Any class that wants to use the global memory must derive from this class.
+ */
+class ECS_API GlobalMemoryUser
 {
+private:
+    internal::MemoryManager* ecsMemoryManager;
+
 public:
     GlobalMemoryUser();
     virtual ~GlobalMemoryUser();
 
     inline const void* Allocate(size_t memSize, const char* user = nullptr);
     inline void        Free(void* pMem);
-
-private:
-    internal::MemoryManager* ECS_MEMORY_MANAGER;
 };
 
 } // namespace memory
 
-class ECSEngine;
-
-extern ECSEngine* ECS_Engine;
-
-void Initialize();
-void Terminate();
+class EcsEngine;
+ECS_API extern EcsEngine* Ecs_Engine;
+ECS_API void              Initialize();
+ECS_API void              Terminate();
 
 } // namespace ecs
 
