@@ -34,7 +34,7 @@ class ECSEngine
 public:
     ECSEngine();
     ~ECSEngine();
-
+  
     inline EntityManager*    GetEntityManager() { return ECS_EntityManager; }
     inline ComponentManager* GetComponentManager()
     {
