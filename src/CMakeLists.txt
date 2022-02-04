@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC log4cplus)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/memory/allocators
                                                    ${CMAKE_CURRENT_SOURCE_DIR}/memory
+                                                   ${CMAKE_CURRENT_SOURCE_DIR}/log
                                                    ${CMAKE_CURRENT_SOURCE_DIR}/event
                                                    ${CMAKE_CURRENT_SOURCE_DIR}/util)
 

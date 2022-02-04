@@ -31,20 +31,20 @@ public:
     ECSEngine();
     ~ECSEngine();
 
-    inline EntityManager*    GetEntityManager() { return ECS_EntityManager; }
-    inline ComponentManager* GetComponentManager()
-    {
-        return ECS_ComponentManager;
-    }
-    inline SystemManager* GetSystemManager() { return ECS_SystemManager; }
-
-    template <typename E, typename... Args>
-    void SendEvent(Args&&... args)
-    {
-        ECS_EventHandler->Send<E>(std::forward<Args>(event)...);
-    }
-
-    void Update(f32 tickMS);
+//    inline EntityManager*    GetEntityManager() { return ECS_EntityManager; }
+//    inline ComponentManager* GetComponentManager()
+//    {
+//        return ECS_ComponentManager;
+//    }
+//    inline SystemManager* GetSystemManager() { return ECS_SystemManager; }
+//
+//    template <typename E, typename... Args>
+//    void SendEvent(Args&&... args)
+//    {
+//        ECS_EventHandler->Send<E>(std::forward<Args>(event)...);
+//    }
+//
+//    void Update(f32 tickMS);
 
 private:
 };
