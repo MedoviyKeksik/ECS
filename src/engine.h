@@ -1,5 +1,9 @@
 #pragma once
 
+#include <utility>
+
+#include "./util/global.hpp"
+
 namespace ecs
 {
 namespace util
@@ -30,21 +34,21 @@ class ECSEngine
 public:
     ECSEngine();
     ~ECSEngine();
+  
+    inline EntityManager*    GetEntityManager() { return ECS_EntityManager; }
+    inline ComponentManager* GetComponentManager()
+    {
+        return ECS_ComponentManager;
+    }
+    inline SystemManager* GetSystemManager() { return ECS_SystemManager; }
 
-//    inline EntityManager*    GetEntityManager() { return ECS_EntityManager; }
-//    inline ComponentManager* GetComponentManager()
-//    {
-//        return ECS_ComponentManager;
-//    }
-//    inline SystemManager* GetSystemManager() { return ECS_SystemManager; }
-//
-//    template <typename E, typename... Args>
-//    void SendEvent(Args&&... args)
-//    {
-//        ECS_EventHandler->Send<E>(std::forward<Args>(event)...);
-//    }
-//
-//    void Update(f32 tickMS);
+    template <typename E, typename... Args>
+    void SendEvent(Args&&... args)
+    {
+        ECS_EventHandler->Send<E>(std::forward<Args>(args)...);
+    }
+
+    void Update(f32 tickMS);
 
 private:
 };
