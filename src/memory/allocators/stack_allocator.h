@@ -10,7 +10,7 @@ namespace memory
 namespace allocator
 {
 
-class StackAllocator : public IAllocator
+class ECS_API StackAllocator : public IAllocator
 {
 public:
     StackAllocator(const std::size_t memorySize, const void* memory);
@@ -28,7 +28,7 @@ private:
 };
 
 } // namespace allocator
-} // namespace Memory
-} // namespace ECS
+} // namespace memory
+} // namespace ecs
 
 #endif // STACKALLOCATOR_H

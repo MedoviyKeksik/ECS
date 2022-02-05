@@ -1,8 +1,11 @@
-#include "eventhandler.h"
+#include "event_handler.h"
 
 ecs::event::EventHandler::EventHandler()
 {
-    this->GetEventMemoryAllocator() = new EventMemoryAllocator(
+    DEFINE_LOGGER("EventHandler")
+    LogInfo("Initialize EventHandler!");
+
+    this->eventMemoryAllocator = new EventMemoryAllocator(
         ECS_EVENT_MEMORY_BUFFER_SIZE,
         Allocate(ECS_EVENT_MEMORY_BUFFER_SIZE, "EventHandler"));
 
@@ -23,10 +26,12 @@ ecs::event::EventHandler::~EventHandler()
     this->GetEventDispatcherMap().clear();
 
     // Release allocated memory
-    Free((void*)this->GetEventMemoryAllocator()->GetMemoryAddress());
+    this->Free((void*)this->GetEventMemoryAllocator()->GetMemoryAddress());
 
     delete this->GetEventMemoryAllocator();
     this->SetEventMemoryAllocator(nullptr);
+
+    LogInfo("Relealse EventHandler!");
 }
 
 void ecs::event::EventHandler::DispatchEvents()
@@ -39,6 +44,7 @@ void ecs::event::EventHandler::DispatchEvents()
         auto event = this->GetEventStorage()[thisIndex++];
         if (event == nullptr)
         {
+            LogError("Skip corrupted event.", event->GetTypeID());
             continue;
         }
 

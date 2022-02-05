@@ -1,6 +1,6 @@
 #pragma once
 
-#include <typeinfo>
+#include "../api.h"
 
 #include "ievent.h"
 
@@ -10,7 +10,7 @@ namespace event
 {
 
 template <typename T>
-class Event : public IEvent
+class ECS_API Event : public IEvent
 {
 public:
     static const EventTypeId STATIC_EVENT_TYPE_ID;

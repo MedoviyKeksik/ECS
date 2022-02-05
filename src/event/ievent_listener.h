@@ -1,15 +1,14 @@
 #pragma once
 
-#include <list>
-
-#include "eventdelegate.h"
-#include "ieventdelegate.h"
+#include "../api.h"
+#include "../engine.h"
+#include "event_delegate.h"
 
 namespace ecs
 {
 namespace event
 {
-class IEventListener
+class ECS_API IEventListener
 {
     using RegisteredCallbacks = std::list<internal::IEventDelegate*>;
 
@@ -26,7 +25,7 @@ private:
     }
 
 public:
-    IEventListener();
+    IEventListener() = default;
     virtual ~IEventListener();
 
     template <typename E, typename C>
@@ -36,7 +35,7 @@ public:
             new internal::EventDelegate<C, E>(static_cast<C*>(this));
 
         this->GetRegisteredCallbacks().push_back(eventDelegate);
-        ECS_Engine->subscribeEvent<E>(eventDelegate);
+        Ecs_Engine->SubscribeEvent<E>(eventDelegate);
     }
 
     template <typename E, typename C>
@@ -52,8 +51,8 @@ public:
                     [&](const internal::IEventDelegate* other)
                     { return other->operator==(cb); });
 
-                ECS_Engine->UnsubscribeEvent(&delegate);
-                breal;
+                Ecs_Engine->UnsubscribeEvent(&delegate);
+                break;
             }
         }
     }

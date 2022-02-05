@@ -10,7 +10,7 @@
 // 8MB
 #define ECS_SYSTEM_MEMORY_BUFFER_SIZE 8388608
 
-#include "logger.h"
+#include "log/logger.h"
 #include "platform.h"
 
 namespace ecs
@@ -64,10 +64,10 @@ private:
 
 public:
     GlobalMemoryUser();
-    virtual ~GlobalMemoryUser();
+    virtual ~GlobalMemoryUser() = default;
 
-    inline const void* Allocate(size_t memSize, const char* user = nullptr);
-    inline void        Free(void* pMem);
+    const void* Allocate(std::size_t memSize, const char* user = nullptr);
+    void        Free(void* pMem);
 };
 
 } // namespace memory

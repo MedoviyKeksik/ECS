@@ -8,7 +8,7 @@ namespace ecs::util::internal
 {
 
 template <class T>
-class FamilyTypeID
+class ECS_API FamilyTypeID
 {
 public:
     template <class U>

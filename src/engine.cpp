@@ -1,23 +1,21 @@
 #include "engine.h"
 
-#include "eventhandler.h"
+#include "event/event_handler.h"
 
-#include "componentmanager.h"
-#include "entitymanager.h"
-#include "systemmanager.h"
+#include "ecs.h"
 
-#include "timer.h"
+#include "util/timer.h"
 
 namespace ecs
 {
 
 EcsEngine::EcsEngine()
 {
-    ecsEngineTime        = new util::Timer();
-    ecsEventHandler      = new event::EventHandler();
-    ecsSystemManager     = new SystemManager();
-    ecsComponentManager  = new ComponentManager();
-    ecsEntityManager     = new EntityManager(this->ecsComponentManager);
+    ecsEngineTime       = new util::Timer();
+    ecsEventHandler     = new event::EventHandler();
+    ecsSystemManager    = new SystemManager();
+    ecsComponentManager = new ComponentManager();
+    ecsEntityManager    = new EntityManager(this->ecsComponentManager);
 }
 
 EcsEngine::~EcsEngine()

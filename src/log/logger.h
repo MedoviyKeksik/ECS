@@ -11,7 +11,7 @@
 namespace ecs::log
 {
 
-class Logger
+class ECS_API Logger
 {
     log4cplus::Logger m_logger;
 
@@ -73,6 +73,6 @@ public:
 
 #endif // !ECS_DISABLE_LOGGING
 
-#include "loggermacro.h"
+#include "logger_macro.h"
 
 #endif // ECS_LOGGER_H

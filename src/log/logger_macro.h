@@ -9,7 +9,7 @@
 
 #define DEFINE_LOGGER(name) LOGGER = ecs::log::internal::GetLogger(name);
 #define DEFINE_STATIC_LOGGER(clazz, name)                                      \
-    log::Logger*##clazz::LOGGER = ecs::log::internal::GetLogger(name);
+    log::Logger* clazz::LOGGER = ecs::log::internal::GetLogger(name);
 #define DEFINE_STATIC_LOGGER_TEMPLATE(clazz, T, name)                          \
     template <class T>                                                         \
     log::Logger* clazz<T>::LOGGER = ecs::log::internal::GetLogger(name);

@@ -1,9 +1,13 @@
 #pragma once
 
+#ifdef ECS_USE_DLL
 #ifdef ECS_EXPORT
 #define ECS_API __declspec(dllexport)
 #else
 #define ECS_API __declspec(dllimport)
+#endif
+#else
+#define ECS_API
 #endif
 
 // Check if using 64-Bit architecture
@@ -72,8 +76,8 @@ using f64 = double_t;
 using iptr = intptr_t;
 using uptr = uintptr_t;
 
-using ObjectID = size_t;
-using TypeID   = size_t;
+using ObjectID = std::size_t;
+using TypeID   = std::size_t;
 
 static const ObjectID INVALID_OBJECT_ID = std::numeric_limits<ObjectID>::max();
 static const TypeID   INVALID_TYPE_ID   = std::numeric_limits<TypeID>::max();
@@ -87,7 +91,6 @@ union TimeStamp
         : asUInt(0U)
     {
     }
-
 
     explicit TimeStamp(f32 floatValue)
         : asFloat(floatValue)
@@ -110,6 +113,7 @@ union TimeStamp
         return this->asFloat < other.asFloat;
     }
     inline const bool operator>(const TimeStamp& other) const
+    {
         return this->asFloat > other.asFloat;
     }
 

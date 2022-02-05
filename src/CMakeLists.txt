@@ -10,11 +10,8 @@ set(SOURCES ${HEADER_FILES} ${SOURCE_FILES})
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC log4cplus)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/memory/allocators
-                                                   ${CMAKE_CURRENT_SOURCE_DIR}/memory
-                                                   ${CMAKE_CURRENT_SOURCE_DIR}/log
-                                                   ${CMAKE_CURRENT_SOURCE_DIR}/event
-                                                   ${CMAKE_CURRENT_SOURCE_DIR}/util)
+target_link_libraries(${PROJECT_NAME} PRIVATE log4cplus)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

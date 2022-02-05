@@ -2,20 +2,21 @@
 
 #include <typeinfo>
 
-#include "../util/global.hpp"
-#include "ieventdelegate.h"
+#include "../api.h"
+#include "ievent_delegate.h"
 
 namespace ecs
 {
 namespace event
 {
+
 class IEvent;
 
 namespace internal
 {
 
 template <typename Class, typename EventType>
-class EventDelegate : public IEventDelegate
+class ECS_API EventDelegate : public IEventDelegate
 {
     typedef void (Class::*Callback)(const EventType* const);
 
@@ -25,8 +26,6 @@ public:
         , callback(callbackFunction)
     {
     }
-
-    virtual ~IEventDelegate() {}
 
     virtual IEventDelegate* clone() override
     {

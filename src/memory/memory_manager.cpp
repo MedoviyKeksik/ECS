@@ -1,10 +1,10 @@
-#include "memorymanager.h"
+#include "memory_manager.h"
 
 #include <algorithm>
 #include <cassert>
 #include <iostream>
 
-ecs::memory::Internal::MemoryManager::MemoryManager()
+ecs::memory::internal::MemoryManager::MemoryManager()
 {
     this->globalMemory = malloc(MemoryManager::MEMORY_CAPACITY);
     if (this->globalMemory != nullptr)
@@ -25,7 +25,7 @@ ecs::memory::Internal::MemoryManager::MemoryManager()
     this->freedMemory.clear();
 }
 
-ecs::memory::Internal::MemoryManager::~MemoryManager()
+ecs::memory::internal::MemoryManager::~MemoryManager()
 {
     this->memoryAllocator->Clear();
     delete this->memoryAllocator;
@@ -35,15 +35,18 @@ ecs::memory::Internal::MemoryManager::~MemoryManager()
     this->globalMemory = nullptr;
 }
 
-void* ecs::memory::Internal::MemoryManager::Allocate(std::size_t memorySize,
+void* ecs::memory::internal::MemoryManager::Allocate(std::size_t memorySize,
                                                      const std::string& user)
 {
+    LogDebug("%s allocated %d bytes of global memory.",
+             user.data() != nullptr ? user : "Unknown",
+             memorySize);
     void* pointerMemory = memoryAllocator->Allocate(memorySize, alignof(u8));
     this->pendingMemory.push_back(std::make_pair(user, pointerMemory));
     return pointerMemory;
 }
 
-void ecs::memory::Internal::MemoryManager::Free(void* pointerMemory)
+void ecs::memory::internal::MemoryManager::Free(void* pointerMemory)
 {
     if (pointerMemory == this->pendingMemory.back().second)
     {
@@ -90,7 +93,7 @@ void ecs::memory::Internal::MemoryManager::Free(void* pointerMemory)
     }
 }
 
-void ecs::memory::Internal::MemoryManager::CheckMemoryLeaks()
+void ecs::memory::internal::MemoryManager::CheckMemoryLeaks()
 {
     assert(!(this->freedMemory.size() > 0 && this->pendingMemory.size() == 0) &&
            "Implementation failure");

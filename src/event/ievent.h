@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../util/global.hpp"
+#include "../api.h"
 
 namespace ecs
 {
@@ -11,11 +11,11 @@ using EventTimeStamp = TimeStamp;
 
 static const EventTypeId INVALID_EVENT_TYPE = INVALID_TYPE_ID;
 
-class IEvent
+class ECS_API IEvent
 {
 public:
     IEvent(EventTypeId typeId);
-    virtual ~IEvent();
+    virtual ~IEvent() = default;
 
     inline const auto& GetTypeID() const { return this->typeId; }
     inline auto&       GetTypeID() { return this->typeId; }

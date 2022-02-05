@@ -16,7 +16,7 @@ class Logger;
 namespace internal
 {
 
-class LoggerManager
+class ECS_API LoggerManager
 {
     using LoggerCache = std::unordered_map<std::string, Logger*>;
 
@@ -34,8 +34,8 @@ class LoggerManager
     LoggerCache m_Cache;
 
 public:
-    LoggerManager() = default;
-    ~LoggerManager() = default;
+    LoggerManager()                     = default;
+    ~LoggerManager()                    = default;
     LoggerManager(const LoggerManager&) = delete;
     LoggerManager& operator=(LoggerManager&) = delete;
     Logger*        GetLogger(const char* logger = DEFAULT_LOGGER);

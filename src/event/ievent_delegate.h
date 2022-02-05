@@ -2,7 +2,7 @@
 
 #include <typeinfo>
 
-#include "../util/global.hpp"
+#include "../api.h"
 
 namespace ecs
 {
@@ -14,7 +14,7 @@ namespace internal
 {
 using EventDelegateId = std::size_t;
 
-class IEventDelegate
+class ECS_API IEventDelegate
 {
 public:
     IEventDelegate()          = default;

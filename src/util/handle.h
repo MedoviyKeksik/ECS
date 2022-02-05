@@ -3,16 +3,22 @@
 
 #include "../api.h"
 
+#include <limits.h>
+
 #pragma warning(push)
 
 #pragma warning(disable : 4293)
 
-namespace ecs::util
+namespace ecs
+{
+namespace util
 {
 namespace internal
 {
 
-template <typename handle_value_type, size_t version_bits, size_t index_bits>
+template <typename handle_value_type,
+          std::size_t version_bits,
+          std::size_t index_bits>
 union Handle
 {
     static_assert(
@@ -21,12 +27,14 @@ union Handle
 
     using value_type = handle_value_type;
 
-    static constexpr size_t NUM_VERSION_BITS{ version_bits };
-    static constexpr size_t NUM_INDEX_BITS{ index_bits };
+    static constexpr std::size_t NUM_VERSION_BITS{ version_bits };
+    static constexpr std::size_t NUM_INDEX_BITS{ index_bits };
 
     static constexpr value_type MIN_VERISON{ 0 };
     static constexpr value_type MAX_VERSION{ (1U << NUM_VERSION_BITS) - 2U };
-    static constexpr value_type MAX_INDICES{ (1U << NUM_INDEX_BITS) - 2U };
+    static constexpr value_type MAX_INDICES{
+        ((value_type)1U << NUM_INDEX_BITS) - 2U
+    };
 
     static constexpr value_type INVALID_HANDLE{
         std::numeric_limits<value_type>::max()
@@ -41,7 +49,7 @@ public:
 
     Handle() = default;
 
-    explicit Handle(value_type value)
+    Handle(value_type value)
         : value(value)
     {
     }
@@ -52,7 +60,7 @@ public:
     {
     }
 
-    inline explicit operator value_type() const { return value; }
+    inline operator value_type() const { return value; }
 
 private:
     value_type value;
@@ -60,10 +68,13 @@ private:
 } // namespace internal
 
 using Handle32 = internal::Handle<u32, 12, 20>;
+#ifdef ECS_64BIT
 using Handle64 = internal::Handle<u64, 24, 40>;
-
-template <class T, class handle_type, size_t grow = 1024>
-class HandleTable
+#else
+using Handle64 = Handle32;
+#endif
+template <class T, class handle_type, std::size_t grow = 1024>
+class ECS_API HandleTable
 {
     using Handle = handle_type;
 
@@ -133,11 +144,11 @@ private:
 
     void GrowTable()
     {
-        size_t oldSize = this->m_Table.size();
+        std::size_t oldSize = this->m_Table.size();
 
         assert(oldSize < Handle::MAX_INDICES && "Max table capacity reached!");
 
-        size_t newSize = std::min(oldSize + grow, Handle::MAX_INDICES);
+        std::size_t newSize = std::min(oldSize + grow, Handle::MAX_INDICES);
 
         this->m_Table.resize(newSize);
 
@@ -146,8 +157,8 @@ private:
     }
 
 }; // class HandleTable
-
-} // namespace ecs::util
+} // namespace util
+} // namespace ecs
 
 #pragma warning(pop)
 

@@ -10,7 +10,7 @@ namespace memory
 namespace allocator
 {
 
-class PoolAllocator : public IAllocator
+class ECS_API PoolAllocator : public IAllocator
 {
 public:
     PoolAllocator(const std::size_t memorySize,
@@ -30,7 +30,7 @@ private:
 };
 
 } // namespace allocator
-} // namespace Memory
-} // namespace ECS
+} // namespace memory
+} // namespace ecs
 
 #endif // POOLALLOCATOR_H

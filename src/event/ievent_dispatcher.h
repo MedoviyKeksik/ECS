@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ieventdelegate.h"
+#include "ievent_delegate.h"
 
 namespace ecs
 {
@@ -12,7 +12,7 @@ class IEvent;
 namespace internal
 {
 
-class IEventDispatcher
+class ECS_API IEventDispatcher
 {
 public:
     IEventDispatcher()          = default;

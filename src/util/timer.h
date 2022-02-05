@@ -7,7 +7,7 @@
 namespace ecs::util
 {
 
-class Timer
+class ECS_API Timer
 {
     using Elapsed = std::chrono::duration<f32, std::milli>;
 

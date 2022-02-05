@@ -1,23 +1,21 @@
 #pragma once
 
-#include <unordered_map>
-#include <utility>
-#include <vector>
+#include "../api.h"
 
-#include "../util/global.hpp"
+#include "../memory/allocators/linear_allocator.h"
 
+#include "event_dispatcher.h"
 #include "ievent.h"
-#include "linearallocator.h"
-
-#include "eventdispatcher.h"
 
 namespace ecs
 {
 namespace event
 {
-class EventHandler : memory::GlobalMemoryUser
+class ECS_API EventHandler : memory::GlobalMemoryUser
 {
-    friend class ECSEngine;
+    friend class ecs::EcsEngine;
+
+    DECLARE_LOGGER
 
     using EventDispatcherMap =
         std::unordered_map<EventTypeId, internal::IEventDispatcher*>;
@@ -84,9 +82,11 @@ public:
         {
             this->GetEventStorage().push_back(
                 new (pMem) E(std::forward<Args>(eventArgs)...));
+            LogTrace("\'%s\' event buffered.", typeid(E).name());
         }
         else
         {
+            LogWarning("Event buffer is full! Cut off new incoming events !!!");
         }
     }
 
@@ -95,6 +95,44 @@ public:
 private:
     EventHandler(const EventHandler&) = delete;
     EventHandler& operator=(const EventHandler&) = delete;
+
+private:
+    // Add event callback
+    template <class E>
+    inline void AddEventCallback(internal::IEventDelegate* const eventDelegate)
+    {
+        EventTypeId ETID = E::STATIC_EVENT_TYPE_ID;
+
+        EventDispatcherMap::const_iterator iter =
+            this->GetEventDispatcherMap().find(ETID);
+        if (iter == this->GetEventDispatcherMap().end())
+        {
+            std::pair<EventTypeId, internal::IEventDispatcher*> kvp(
+                ETID, new internal::EventDispatcher<E>());
+
+            kvp.second->AddEventCallback(eventDelegate);
+
+            this->GetEventDispatcherMap().insert(kvp);
+        }
+        else
+        {
+            this->GetEventDispatcherMap()[ETID]->AddEventCallback(
+                eventDelegate);
+        }
+    }
+
+    // Remove event callback
+    inline void RemoveEventCallback(internal::IEventDelegate* eventDelegate)
+    {
+        auto typeId = eventDelegate->GetStaticEventTypeId();
+        EventDispatcherMap::const_iterator iter =
+            this->GetEventDispatcherMap().find(typeId);
+        if (iter != this->GetEventDispatcherMap().end())
+        {
+            this->GetEventDispatcherMap()[typeId]->RemoveEventCallback(
+                eventDelegate);
+        }
+    }
 
 private:
     EventDispatcherMap    eventDispatcherMap;

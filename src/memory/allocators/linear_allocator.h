@@ -10,7 +10,7 @@ namespace memory
 namespace allocator
 {
 
-class LinearAllocator : public IAllocator
+class ECS_API LinearAllocator : public IAllocator
 {
     /*
      *   Allocates memory in a linear way
@@ -36,7 +36,7 @@ public:
 };
 
 } // namespace allocator
-} // namespace Memory
-} // namespace ECS
+} // namespace memory
+} // namespace ecs
 
 #endif // LINEARALLOCATOR_H

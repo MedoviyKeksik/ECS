@@ -1,12 +1,8 @@
 #ifndef MEMORYMANAGER_H
 #define MEMORYMANAGER_H
 
-#include <list>
-#include <string>
-#include <vector>
-
-#include "global.hpp"
-#include "stackallocator.h"
+#include "../api.h"
+#include "allocators/stack_allocator.h"
 
 #define ECS_GLOBAL_MEMORY_CAPACITY 134217728 // 128 MB
 
@@ -14,13 +10,14 @@ namespace ecs
 {
 namespace memory
 {
-namespace Internal
+namespace internal
 {
 
-class MemoryManager
+class ECS_API MemoryManager
 {
-
     using StackAllocator = allocator::StackAllocator;
+
+    DECLARE_LOGGER
 
 public:
     MemoryManager();
@@ -45,8 +42,8 @@ private:
     MemoryManager& operator=(MemoryManager&) = delete;
 };
 
-} // namespace Internal
-} // namespace Memory
-} // namespace ECS
+} // namespace internal
+} // namespace memory
+} // namespace ecs
 
 #endif // MEMORYMANAGER_H

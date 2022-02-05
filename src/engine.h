@@ -1,8 +1,8 @@
 #pragma once
 
 #include "api.h"
-#include "eventdelegate.h"
-#include "eventhandler.h"
+#include "event/event_delegate.h"
+#include "event/event_handler.h"
 
 namespace ecs
 {
@@ -26,8 +26,11 @@ class ECS_API EcsEngine
     friend class IEntity;
     friend class IComponent;
     friend class ISystem;
+
     friend class event::IEvent;
+
     friend class event::IEventListener;
+
     friend class EntityManager;
 
 public:
@@ -39,7 +42,7 @@ private:
     EcsEngine& operator=(EcsEngine&) = delete;
 
 public:
-    inline EntityManager*    GetEntityManager() { return ecsEntityManager; }
+    inline EntityManager* GetEntityManager() { return ecsEntityManager; }
 
     inline ComponentManager* GetComponentManager()
     {
@@ -56,7 +59,7 @@ public:
     template <typename E, typename... Args>
     void SendEvent(Args&&... args)
     {
-        ecsEventHandler->Send<E>(std::forward<Args>(event)...);
+        ecsEventHandler->Send<E>(std::forward<Args>(args)...);
     }
 
     /**
@@ -75,8 +78,7 @@ private:
     }
 
     // Remove event callback
-    inline void UnsubscribeEvent(
-        event::internal::IEventDelegate* eventDelegate);
+    void UnsubscribeEvent(event::internal::IEventDelegate* eventDelegate);
 
     util::Timer*         ecsEngineTime;
     EntityManager*       ecsEntityManager;

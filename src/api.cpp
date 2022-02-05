@@ -1,8 +1,8 @@
 #include "api.h"
 
 #include "engine.h"
-#include "loggermanager.h"
-#include "memorymanager.h"
+#include "log/logger_manager.h"
+#include "memory/memory_manager.h"
 
 namespace ecs
 {
@@ -36,16 +36,14 @@ GlobalMemoryUser::GlobalMemoryUser()
 {
 }
 
-GlobalMemoryUser::~GlobalMemoryUser() {}
-
-inline const void* GlobalMemoryUser::Allocate(size_t memSize, const char* user)
+const void* GlobalMemoryUser::Allocate(std::size_t memSize, const char* user)
 {
-    return internal::ecsMemoryManager->Allocate(memSize, user);
+    return ecsMemoryManager->Allocate(memSize, user);
 }
 
-inline void GlobalMemoryUser::Free(void* pMem)
+void GlobalMemoryUser::Free(void* pMem)
 {
-    internal::ecsMemoryManager->Free(pMem);
+    ecsMemoryManager->Free(pMem);
 }
 
 } // namespace memory
