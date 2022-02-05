@@ -1,6 +1,5 @@
+#pragma once
 
-#ifndef ECS_LOGGERMACRO_H
-#define ECS_LOGGERMACRO_H
 //#define ECS_DISABLE_LOGGING 1
 
 #if !ECS_DISABLE_LOGGING
@@ -36,5 +35,3 @@
 #define LogError(format, ...)
 #define LogFatal(format, ...)
 #endif
-
-#endif // ECS_LOGGERMACRO_H

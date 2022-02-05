@@ -1,5 +1,4 @@
-#ifndef STACKALLOCATOR_H
-#define STACKALLOCATOR_H
+#pragma once
 
 #include "iallocator.hpp"
 
@@ -30,5 +29,3 @@ private:
 } // namespace allocator
 } // namespace memory
 } // namespace ecs
-
-#endif // STACKALLOCATOR_H

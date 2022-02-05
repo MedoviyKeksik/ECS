@@ -1,6 +1,4 @@
-
-#ifndef ECS_FAMILYTYPEID_H
-#define ECS_FAMILYTYPEID_H
+#pragma once
 
 #include "../api.h"
 
@@ -25,5 +23,3 @@ private:
 };
 
 } // namespace ecs::util::internal
-
-#endif // ECS_FAMILYTYPEID_H

@@ -1,5 +1,4 @@
-#ifndef ECS_API_H
-#define ECS_API_H
+#pragma once
 
 #define ENITY_LUT_GROW 1024
 #define ENITY_T_CHUNK_SIZE 512
@@ -78,5 +77,3 @@ ECS_API void              Initialize();
 ECS_API void              Terminate();
 
 } // namespace ecs
-
-#endif // ECS_API_H

@@ -1,5 +1,4 @@
-#ifndef MEMORYMANAGER_H
-#define MEMORYMANAGER_H
+#pragma once
 
 #include "../api.h"
 #include "allocators/stack_allocator.h"
@@ -45,5 +44,3 @@ private:
 } // namespace internal
 } // namespace memory
 } // namespace ecs
-
-#endif // MEMORYMANAGER_H

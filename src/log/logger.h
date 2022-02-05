@@ -1,5 +1,4 @@
-#ifndef ECS_LOGGER_H
-#define ECS_LOGGER_H
+#pragma once
 
 #include "../platform.h"
 
@@ -74,5 +73,3 @@ public:
 #endif // !ECS_DISABLE_LOGGING
 
 #include "logger_macro.h"
-
-#endif // ECS_LOGGER_H

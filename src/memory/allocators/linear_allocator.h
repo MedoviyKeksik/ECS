@@ -1,5 +1,4 @@
-#ifndef LINEARALLOCATOR_H
-#define LINEARALLOCATOR_H
+#pragma once
 
 #include "iallocator.hpp"
 
@@ -38,5 +37,3 @@ public:
 } // namespace allocator
 } // namespace memory
 } // namespace ecs
-
-#endif // LINEARALLOCATOR_H

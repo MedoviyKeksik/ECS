@@ -1,6 +1,4 @@
-
-#ifndef ECS_TIMER_H
-#define ECS_TIMER_H
+#pragma once
 
 #include "../api.h"
 
@@ -30,5 +28,3 @@ private:
 }; // class Timer
 
 } // namespace ecs::util
-
-#endif // ECS_TIMER_H

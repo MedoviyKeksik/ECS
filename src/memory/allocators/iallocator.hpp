@@ -1,5 +1,4 @@
-#ifndef IALLOCATOR_HPP
-#define IALLOCATOR_HPP
+#pragma once
 
 #include "../../api.h"
 
@@ -78,5 +77,3 @@ protected:
 } // namespace allocator
 } // namespace memory
 } // namespace ecs
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef MEMORYCHUNKALLOCATOR_H
-#define MEMORYCHUNKALLOCATOR_H
+#pragma once
 
 #include <cassert>
 #include <list>
@@ -231,5 +230,3 @@ public:
 
 } // namespace memory
 } // namespace ecs
-
-#endif // MEMORYCHUNKALLOCATOR_H

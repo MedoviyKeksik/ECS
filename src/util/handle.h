@@ -1,5 +1,4 @@
-#ifndef ECS_HANDLE_H
-#define ECS_HANDLE_H
+#pragma once
 
 #include "../api.h"
 
@@ -161,5 +160,3 @@ private:
 } // namespace ecs
 
 #pragma warning(pop)
-
-#endif // ECS_HANDLE_H

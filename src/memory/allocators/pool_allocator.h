@@ -1,5 +1,4 @@
-#ifndef POOLALLOCATOR_H
-#define POOLALLOCATOR_H
+#pragma once
 
 #include "iallocator.hpp"
 
@@ -32,5 +31,3 @@ private:
 } // namespace allocator
 } // namespace memory
 } // namespace ecs
-
-#endif // POOLALLOCATOR_H

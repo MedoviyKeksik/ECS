@@ -1,7 +1,6 @@
-#if !ECS_DISABLE_LOGGING
+#pragma once
 
-#ifndef ECS_LOGGERMANAGER_H
-#define ECS_LOGGERMANAGER_H
+#if !ECS_DISABLE_LOGGING
 
 #include "../platform.h"
 
@@ -45,5 +44,4 @@ public:
 } // namespace internal
 } // namespace ecs::log
 
-#endif // ECS_LOGGERMANAGER_H
 #endif // !ECS_DISABLE_LOGGING
