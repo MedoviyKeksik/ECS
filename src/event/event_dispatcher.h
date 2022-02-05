@@ -2,9 +2,9 @@
 
 #include <list>
 
-#include "../api.h"
+#include "api.h"
 
-#include "ievent_dispatcher.h"
+#include "event/ievent_dispatcher.h"
 
 namespace ecs
 {

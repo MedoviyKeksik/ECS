@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../api.h"
+#include "api.h"
 
-#include "../memory/allocators/linear_allocator.h"
+#include "memory/allocators/linear_allocator.h"
 
-#include "event_dispatcher.h"
-#include "ievent.h"
+#include "event/event_dispatcher.h"
+#include "event/ievent.h"
 
 namespace ecs
 {

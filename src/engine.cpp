@@ -1,8 +1,8 @@
 #include "engine.h"
 
-#include "event/event_handler.h"
-
 #include "ecs.h"
+
+#include "event/event_handler.h"
 
 #include "util/timer.h"
 

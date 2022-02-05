@@ -8,6 +8,7 @@
 #define ECS_SYSTEM_MEMORY_BUFFER_SIZE 8388608 // 8MB
 
 #include "log/logger.h"
+
 #include "platform.h"
 
 namespace ecs

@@ -2,7 +2,7 @@
 
 #if !ECS_DISABLE_LOGGING
 
-#include "../platform.h"
+#include "platform.h"
 
 // Log4cplus logger support
 #include "log4cplus/logger.h"

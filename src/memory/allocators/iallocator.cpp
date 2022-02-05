@@ -1,4 +1,4 @@
-#include "iallocator.hpp"
+#include "memory/allocators/iallocator.hpp"
 
 ecs::memory::allocator::IAllocator::IAllocator(const std::size_t memorySize,
                                                const void*       memory)

@@ -21,6 +21,7 @@
 #endif
 
 // Platform includes
+#include <limits.h>
 #include <limits>
 #include <stdarg.h>
 #include <stdint.h>
@@ -39,7 +40,7 @@
 #include <assert.h>
 #include <memory>
 
-#include <math.h>
+#include <cmath>
 #include <string>
 
 #include <chrono>

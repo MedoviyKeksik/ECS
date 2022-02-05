@@ -2,8 +2,9 @@
 
 #include <typeinfo>
 
-#include "../api.h"
-#include "ievent_delegate.h"
+#include "api.h"
+
+#include "event/ievent_delegate.h"
 
 namespace ecs
 {

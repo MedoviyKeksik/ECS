@@ -2,7 +2,7 @@
 
 #include <typeinfo>
 
-#include "../api.h"
+#include "api.h"
 
 namespace ecs
 {

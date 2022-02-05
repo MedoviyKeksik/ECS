@@ -1,7 +1,7 @@
-#include "ievent.h"
+#include "event/ievent.h"
 
-#include "../engine.h"
-#include "../util/timer.h"
+#include "engine.h"
+#include "util/timer.h"
 
 ecs::event::IEvent::IEvent(EventTypeId typeId)
     : typeId(typeId)

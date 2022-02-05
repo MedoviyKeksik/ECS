@@ -1,8 +1,4 @@
-#include "memory_manager.h"
-
-#include <algorithm>
-#include <cassert>
-#include <iostream>
+#include "memory/memory_manager.h"
 
 ecs::memory::internal::MemoryManager::MemoryManager()
 {
@@ -72,19 +68,6 @@ void ecs::memory::internal::MemoryManager::Free(void* pointerMemory)
 
                 check = true;
             }
-
-            //            for (const auto& it : this->freedMemory)
-            //            {
-            //                if (it == this->pendingMemory.back().second)
-            //                {
-            //                    this->memoryAllocator->Free(pointerMemory);
-            //                    this->pendingMemory.pop_back();
-            //                    this->freedMemory.remove(it);
-
-            //                    check = true;
-            //                    break;
-            //                }
-            //            }
         }
     }
     else
@@ -100,10 +83,11 @@ void ecs::memory::internal::MemoryManager::CheckMemoryLeaks()
 
     if (this->pendingMemory.size() > 0)
     {
-        std::cerr << "!!!   M E M O R Y   L E A K   D E T E C T E D   !!!"
-                  << std::endl;
+        LogFatal("!!!  M E M O R Y   L E A K   D E T E C T E D  !!!")
+            LogFatal("!!!  M E M O R Y   L E A K   D E T E C T E D  !!!")
+                LogFatal("!!!  M E M O R Y   L E A K   D E T E C T E D  !!!")
 
-        for (const auto& i : this->pendingMemory)
+                    for (const auto& i : this->pendingMemory)
         {
             bool isFreed = false;
 
@@ -118,24 +102,17 @@ void ecs::memory::internal::MemoryManager::CheckMemoryLeaks()
                                       return false;
                                   });
 
-            //            for (const auto& j : this->freeMemory)
-            //            {
-            //                if (i.second == j)
-            //                {
-            //                    isFreed = true;
-            //                    break;
-            //                }
-            //            }
-
             if (isFreed == false)
             {
-                std::cerr << "Memory user didn't release allocated memory!"
-                          << std::endl;
+                LogFatal(
+                    "\'%s\' memory user didn't release allocated memory %p!",
+                    i.first,
+                    i.second)
             }
         }
     }
     else
     {
-        std::cout << "Np memory leaks detected." << std::endl << std::flush;
+        LogInfo("No memory leaks detected.")
     }
 }

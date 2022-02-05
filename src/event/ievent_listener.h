@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../api.h"
-#include "../engine.h"
-#include "event_delegate.h"
+#include "api.h"
+#include "engine.h"
+
+#include "event/event_delegate.h"
 
 namespace ecs
 {

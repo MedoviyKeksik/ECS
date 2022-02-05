@@ -3,8 +3,8 @@
 #include <cassert>
 #include <list>
 
-#include "../api.h"
-#include "allocators/pool_allocator.h"
+#include "api.h"
+#include "memory/allocators/pool_allocator.h"
 
 namespace ecs
 {

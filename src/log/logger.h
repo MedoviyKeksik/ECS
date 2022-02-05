@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../platform.h"
+#include "platform.h"
 
 #include "log4cplus/logger.h"
 #include "log4cplus/loggingmacros.h"
@@ -72,4 +72,4 @@ public:
 
 #endif // !ECS_DISABLE_LOGGING
 
-#include "logger_macro.h"
+#include "log/logger_macro.h"

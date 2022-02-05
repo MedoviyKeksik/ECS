@@ -1,6 +1,6 @@
 #pragma once
 
-#include "iallocator.hpp"
+#include "memory/allocators/iallocator.hpp"
 
 namespace ecs
 {

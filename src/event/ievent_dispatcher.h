@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ievent_delegate.h"
+#include "event/ievent_delegate.h"
 
 namespace ecs
 {
