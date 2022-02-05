@@ -1,10 +1,11 @@
-#include "ievent.h"
+#include "event/ievent.h"
 
-#include <cassert>
+#include "engine.h"
+#include "util/timer.h"
 
 ecs::event::IEvent::IEvent(EventTypeId typeId)
-    : m_typeId(typeId)
+    : typeId(typeId)
 {
-    assert(ECS_Engine != nullptr && "ECS engine not initialized!");
-    this->m_timeCreated = ECS_Engine->ECS_EngineTimeStamp();
+    assert(Ecs_Engine != nullptr && "ECS engine not initialized!");
+    this->timeCreated = Ecs_Engine->ecsEngineTime->GetTimeStamp();
 }

@@ -1,7 +1,6 @@
-#ifndef POOLALLOCATOR_H
-#define POOLALLOCATOR_H
+#pragma once
 
-#include "iallocator.hpp"
+#include "memory/allocators/iallocator.hpp"
 
 namespace ecs
 {
@@ -10,7 +9,7 @@ namespace memory
 namespace allocator
 {
 
-class PoolAllocator : public IAllocator
+class ECS_API PoolAllocator : public IAllocator
 {
 public:
     PoolAllocator(const std::size_t memorySize,
@@ -30,7 +29,5 @@ private:
 };
 
 } // namespace allocator
-} // namespace Memory
-} // namespace ECS
-
-#endif // POOLALLOCATOR_H
+} // namespace memory
+} // namespace ecs

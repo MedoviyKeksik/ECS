@@ -1,9 +1,8 @@
-#ifndef EVENT_H
-#define EVENT_H
+#pragma once
 
-#include <typeinfo>
+#include "api.h"
 
-#include "ievent.h"
+#include "event/ievent.h"
 
 namespace ecs
 {
@@ -11,7 +10,7 @@ namespace event
 {
 
 template <typename T>
-class Event : public IEvent
+class ECS_API Event : public IEvent
 {
 public:
     static const EventTypeId STATIC_EVENT_TYPE_ID;
@@ -26,5 +25,3 @@ const EventTypeId Event<T>::STATIC_EVENT_TYPE_ID{ typeid(T).hash_code() };
 
 } // namespace event
 } // namespace ecs
-
-#endif

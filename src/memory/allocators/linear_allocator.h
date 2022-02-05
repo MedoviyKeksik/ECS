@@ -1,7 +1,6 @@
-#ifndef LINEARALLOCATOR_H
-#define LINEARALLOCATOR_H
+#pragma once
 
-#include "iallocator.hpp"
+#include "memory/allocators/iallocator.hpp"
 
 namespace ecs
 {
@@ -10,7 +9,7 @@ namespace memory
 namespace allocator
 {
 
-class LinearAllocator : public IAllocator
+class ECS_API LinearAllocator : public IAllocator
 {
     /*
      *   Allocates memory in a linear way
@@ -36,7 +35,5 @@ public:
 };
 
 } // namespace allocator
-} // namespace Memory
-} // namespace ECS
-
-#endif // LINEARALLOCATOR_H
+} // namespace memory
+} // namespace ecs

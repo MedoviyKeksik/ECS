@@ -1,10 +1,6 @@
-#include "memorymanager.h"
+#include "memory/memory_manager.h"
 
-#include <algorithm>
-#include <cassert>
-#include <iostream>
-
-ecs::memory::Internal::MemoryManager::MemoryManager()
+ecs::memory::internal::MemoryManager::MemoryManager()
 {
     this->globalMemory = malloc(MemoryManager::MEMORY_CAPACITY);
     if (this->globalMemory != nullptr)
@@ -25,7 +21,7 @@ ecs::memory::Internal::MemoryManager::MemoryManager()
     this->freedMemory.clear();
 }
 
-ecs::memory::Internal::MemoryManager::~MemoryManager()
+ecs::memory::internal::MemoryManager::~MemoryManager()
 {
     this->memoryAllocator->Clear();
     delete this->memoryAllocator;
@@ -35,15 +31,18 @@ ecs::memory::Internal::MemoryManager::~MemoryManager()
     this->globalMemory = nullptr;
 }
 
-void* ecs::memory::Internal::MemoryManager::Allocate(std::size_t memorySize,
+void* ecs::memory::internal::MemoryManager::Allocate(std::size_t memorySize,
                                                      const std::string& user)
 {
+    LogDebug("%s allocated %d bytes of global memory.",
+             user.data() != nullptr ? user : "Unknown",
+             memorySize);
     void* pointerMemory = memoryAllocator->Allocate(memorySize, alignof(u8));
     this->pendingMemory.push_back(std::make_pair(user, pointerMemory));
     return pointerMemory;
 }
 
-void ecs::memory::Internal::MemoryManager::Free(void* pointerMemory)
+void ecs::memory::internal::MemoryManager::Free(void* pointerMemory)
 {
     if (pointerMemory == this->pendingMemory.back().second)
     {
@@ -69,19 +68,6 @@ void ecs::memory::Internal::MemoryManager::Free(void* pointerMemory)
 
                 check = true;
             }
-
-            //            for (const auto& it : this->freedMemory)
-            //            {
-            //                if (it == this->pendingMemory.back().second)
-            //                {
-            //                    this->memoryAllocator->Free(pointerMemory);
-            //                    this->pendingMemory.pop_back();
-            //                    this->freedMemory.remove(it);
-
-            //                    check = true;
-            //                    break;
-            //                }
-            //            }
         }
     }
     else
@@ -90,17 +76,18 @@ void ecs::memory::Internal::MemoryManager::Free(void* pointerMemory)
     }
 }
 
-void ecs::memory::Internal::MemoryManager::CheckMemoryLeaks()
+void ecs::memory::internal::MemoryManager::CheckMemoryLeaks()
 {
     assert(!(this->freedMemory.size() > 0 && this->pendingMemory.size() == 0) &&
            "Implementation failure");
 
     if (this->pendingMemory.size() > 0)
     {
-        std::cerr << "!!!   M E M O R Y   L E A K   D E T E C T E D   !!!"
-                  << std::endl;
+        LogFatal("!!!  M E M O R Y   L E A K   D E T E C T E D  !!!")
+            LogFatal("!!!  M E M O R Y   L E A K   D E T E C T E D  !!!")
+                LogFatal("!!!  M E M O R Y   L E A K   D E T E C T E D  !!!")
 
-        for (const auto& i : this->pendingMemory)
+                    for (const auto& i : this->pendingMemory)
         {
             bool isFreed = false;
 
@@ -115,24 +102,17 @@ void ecs::memory::Internal::MemoryManager::CheckMemoryLeaks()
                                       return false;
                                   });
 
-            //            for (const auto& j : this->freeMemory)
-            //            {
-            //                if (i.second == j)
-            //                {
-            //                    isFreed = true;
-            //                    break;
-            //                }
-            //            }
-
             if (isFreed == false)
             {
-                std::cerr << "Memory user didn't release allocated memory!"
-                          << std::endl;
+                LogFatal(
+                    "\'%s\' memory user didn't release allocated memory %p!",
+                    i.first,
+                    i.second)
             }
         }
     }
     else
     {
-        std::cout << "Np memory leaks detected." << std::endl << std::flush;
+        LogInfo("No memory leaks detected.")
     }
 }

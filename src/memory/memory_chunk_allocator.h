@@ -1,11 +1,10 @@
-#ifndef MEMORYCHUNKALLOCATOR_H
-#define MEMORYCHUNKALLOCATOR_H
+#pragma once
 
 #include <cassert>
 #include <list>
 
-#include "../util/global.hpp"
-#include "./allocators/poolallocator.h"
+#include "api.h"
+#include "memory/allocators/pool_allocator.h"
 
 namespace ecs
 {
@@ -13,7 +12,7 @@ namespace memory
 {
 
 template <class OBJECT_TYPE, std::size_t MAX_CHUNK_OBJECTS>
-class MemoryChunkAllocator : protected memory::GlobalMemoryUser
+class ECS_API MemoryChunkAllocator : protected memory::GlobalMemoryUser
 {
     static const std::size_t MAX_OBJECTS = MAX_CHUNK_OBJECTS;
 
@@ -231,5 +230,3 @@ public:
 
 } // namespace memory
 } // namespace ecs
-
-#endif // MEMORYCHUNKALLOCATOR_H
