@@ -12,7 +12,7 @@ public:
     template <class U>
     static const TypeID Get()
     {
-        const TypeID STATIC_TYPE_ID{ s_count++ };
+        static const TypeID STATIC_TYPE_ID{ s_count++ };
         return STATIC_TYPE_ID;
     }
 
