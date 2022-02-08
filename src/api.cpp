@@ -12,10 +12,10 @@ namespace internal
 {
 
 #if !ECS_DISABLE_LOGGING
-LoggerManager* ECSLoggerManager = new LoggerManager();
+LoggerManager* EcsLoggerManager = new LoggerManager();
 log::Logger*   GetLogger(const char* logger)
 {
-    return ECSLoggerManager->GetLogger(logger);
+    return EcsLoggerManager->GetLogger(logger);
 }
 #endif
 
@@ -48,20 +48,20 @@ void GlobalMemoryUser::Free(void* pMem)
 
 } // namespace memory
 
-EcsEngine* Ecs_Engine = nullptr; // new ECSEngine();
+EcsEngine* ecsEngine = nullptr; // new ECSEngine();
 
 void Initialize()
 {
-    if (Ecs_Engine == nullptr)
-        Ecs_Engine = new EcsEngine();
+    if (ecsEngine == nullptr)
+        ecsEngine = new EcsEngine();
 }
 
 void Terminate()
 {
-    if (Ecs_Engine != nullptr)
+    if (ecsEngine != nullptr)
     {
-        delete Ecs_Engine;
-        Ecs_Engine = nullptr;
+        delete ecsEngine;
+        ecsEngine = nullptr;
     }
 
     // check for memory leaks
