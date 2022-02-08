@@ -38,7 +38,7 @@ public:
         (receiver->*callback)(reinterpret_cast<const EventType* const>(e));
     }
 
-    virtual inline EventDelegate GetDelegateId() const override
+    virtual inline EventDelegateId GetDelegateId() const override
     {
         static const EventDelegateId DELEGATE_ID{
             typeid(Class).hash_code() ^ typeid(Callback).hash_code()

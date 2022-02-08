@@ -1,6 +1,11 @@
 #pragma once
 
-//#include "api.h"
+#include "api.h"
+#include "engine.h"
+
+#include "event/event.h"
+#include "event/ievent_listener.h"
+
 #include "util/family_type_id.h"
 #include "util/handle.h"
 
@@ -354,14 +359,14 @@ class ECS_API Entity : public IEntity
 public:
     static const EntityTypeId STATIC_ENTITY_TYPE_ID;
 
-    Entity() = default;
+    Entity(){};
 
-    virtual ~Entity() = default;
+    virtual ~Entity(){};
 
 private:
     // Entity destruction always happens through EntityManager !!!
-    void operator delete(void*)   = delete;
-    void operator delete[](void*) = delete;
+    //    void operator delete(void*)   = delete;
+    //    void operator delete[](void*) = delete;
 
 public:
     virtual const EntityTypeId GetStaticEntityTypeID() const override

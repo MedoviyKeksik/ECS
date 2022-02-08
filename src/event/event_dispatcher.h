@@ -36,7 +36,7 @@ public:
     {
         this->SetLocked(true);
         LogTrace("Dispatch event %s", typeid(T).name());
-        if (this->GetPendingRemoveDelegates().empty == false)
+        if (this->GetPendingRemoveDelegates().empty() == false)
         {
             for (auto EC : this->GetPendingRemoveDelegates())
             {

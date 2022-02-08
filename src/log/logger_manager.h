@@ -37,7 +37,7 @@ public:
     ~LoggerManager()                    = default;
     LoggerManager(const LoggerManager&) = delete;
     LoggerManager& operator=(LoggerManager&) = delete;
-    Logger*        GetLogger(const char* logger = DEFAULT_LOGGER);
+    Logger* GetLogger(const char* logger = DEFAULT_LOGGER) { return nullptr; };
 
 }; // class LoggerManager
 

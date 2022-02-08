@@ -33,16 +33,16 @@ public:
     inline void RegisterEventCallback(void (C::*Callback)(const E* const))
     {
         internal::IEventDelegate* eventDelegate =
-            new internal::EventDelegate<C, E>(static_cast<C*>(this));
+            new internal::EventDelegate<C, E>(static_cast<C*>(this), Callback);
 
         this->GetRegisteredCallbacks().push_back(eventDelegate);
-        Ecs_Engine->SubscribeEvent<E>(eventDelegate);
+        ecsEngine->SubscribeEvent<E>(eventDelegate);
     }
 
     template <typename E, typename C>
     inline void UnregisterEventCallback(void (C::*Callback)(const E* const))
     {
-        internal::EventDelegate<C, E> delegate(static_cast<C*>(this));
+        internal::EventDelegate<C, E> delegate(static_cast<C*>(this), Callback);
 
         for (auto cb : this->registeredCallbacks)
         {
@@ -52,7 +52,7 @@ public:
                     [&](const internal::IEventDelegate* other)
                     { return other->operator==(cb); });
 
-                Ecs_Engine->UnsubscribeEvent(&delegate);
+                ecsEngine->UnsubscribeEvent(&delegate);
                 break;
             }
         }

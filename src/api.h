@@ -20,7 +20,7 @@ namespace internal
 #if !ECS_DISABLE_LOGGING
 
 class LoggerManager;
-extern LoggerManager* ECSLoggerManager;
+ECS_API extern LoggerManager* ecsLoggerManager;
 
 /**
  * Returns a log4cpp managed logger instance.
@@ -37,7 +37,7 @@ namespace memory
 namespace internal
 {
 class MemoryManager;
-extern MemoryManager* ECSMemoryManager;
+ECS_API extern MemoryManager* ecsMemoryManager;
 } // namespace internal
 } // namespace memory
 
@@ -71,7 +71,7 @@ public:
 } // namespace memory
 
 class EcsEngine;
-ECS_API extern EcsEngine* Ecs_Engine;
+ECS_API extern EcsEngine* ecsEngine;
 ECS_API void              Initialize();
 ECS_API void              Terminate();
 
