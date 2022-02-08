@@ -4,4 +4,4 @@ project(ecs LANGUAGES CXX)
 
 add_subdirectory(log4cplus)
 
-target_include_directories(${PROJECT_NAME} PRIVATE log4cplus/include)
+target_include_directories(${PROJECT_NAME} PUBLIC log4cplus/include)

@@ -10,9 +10,9 @@ set(SOURCES ${HEADER_FILES} ${SOURCE_FILES})
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE log4cplus)
+target_link_libraries(${PROJECT_NAME} PUBLIC log4cplus)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(WIN32)
     add_compile_definitions(LOG4CPLUS_BUILD_DLL)

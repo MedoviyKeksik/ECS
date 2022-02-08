@@ -12,14 +12,14 @@ public:
     template <class U>
     static const TypeID Get()
     {
-        static const TypeID STATIC_TYPE_ID{ s_count++ };
+        const TypeID STATIC_TYPE_ID{ s_count++ };
         return STATIC_TYPE_ID;
     }
 
     static TypeID Get() { return s_count; }
 
 private:
-    static TypeID s_count;
+    inline static TypeID s_count = 0;
 };
 
 } // namespace ecs::util::internal
