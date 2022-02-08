@@ -12,10 +12,10 @@ namespace internal
 {
 
 #if !ECS_DISABLE_LOGGING
-LoggerManager* EcsLoggerManager = new LoggerManager();
+LoggerManager* ecsLoggerManager = new LoggerManager();
 log::Logger*   GetLogger(const char* logger)
 {
-    return EcsLoggerManager->GetLogger(logger);
+    return ecsLoggerManager->GetLogger(logger);
 }
 #endif
 

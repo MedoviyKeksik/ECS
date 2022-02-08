@@ -178,7 +178,7 @@ public:
         {
             Allocator* allocator =
                 new Allocator(ALLOCATE_SIZE,
-                              Allocate(ALLOCATE_SIZE, this->m_AllocatorTag),
+                              Allocate(ALLOCATE_SIZE, this->allocatorTag),
                               sizeof(OBJECT_TYPE),
                               alignof(OBJECT_TYPE));
             MemoryChunk* newChunk = new MemoryChunk(allocator);
