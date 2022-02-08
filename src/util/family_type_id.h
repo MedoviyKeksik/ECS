@@ -19,7 +19,7 @@ public:
     static TypeID Get() { return s_count; }
 
 private:
-    static TypeID s_count;
+    inline static TypeID s_count = 0;
 };
 
 } // namespace ecs::util::internal
