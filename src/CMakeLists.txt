@@ -8,14 +8,10 @@ file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 set(SOURCES ${HEADER_FILES} ${SOURCE_FILES})
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC log4cplus)
+target_link_libraries(${PROJECT_NAME} PRIVATE log4cplus)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-if(WIN32)
-    add_compile_definitions(LOG4CPLUS_BUILD_DLL)
-endif()
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

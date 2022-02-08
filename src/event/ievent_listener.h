@@ -36,7 +36,7 @@ public:
             new internal::EventDelegate<C, E>(static_cast<C*>(this), Callback);
 
         this->GetRegisteredCallbacks().push_back(eventDelegate);
-        Ecs_Engine->SubscribeEvent<E>(eventDelegate);
+        ecsEngine->SubscribeEvent<E>(eventDelegate);
     }
 
     template <typename E, typename C>
@@ -52,7 +52,7 @@ public:
                     [&](const internal::IEventDelegate* other)
                     { return other->operator==(cb); });
 
-                Ecs_Engine->UnsubscribeEvent(&delegate);
+                ecsEngine->UnsubscribeEvent(&delegate);
                 break;
             }
         }

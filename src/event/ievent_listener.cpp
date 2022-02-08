@@ -9,7 +9,7 @@ void ecs::event::IEventListener::UnregisterAllEventCallbacks()
 {
     for (auto cb : this->GetRegisteredCallbacks())
     {
-        Ecs_Engine->UnsubscribeEvent(cb);
+        ecsEngine->UnsubscribeEvent(cb);
     }
 
     this->GetRegisteredCallbacks().clear();
