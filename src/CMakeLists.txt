@@ -12,6 +12,6 @@ add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE log4cplus)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
