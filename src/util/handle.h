@@ -1,16 +1,14 @@
 #pragma once
 
 #include "api.h"
-
-#include <limits.h>
+#include <algorithm>
+#include <climits>
 
 #pragma warning(push)
 
 #pragma warning(disable : 4293)
 
-namespace ecs
-{
-namespace util
+namespace ecs::util
 {
 namespace internal
 {
@@ -156,7 +154,6 @@ private:
     }
 
 }; // class HandleTable
-} // namespace util
 } // namespace ecs
 
 #pragma warning(pop)
