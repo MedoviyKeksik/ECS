@@ -2,10 +2,11 @@
 
 #include "platform.h"
 
-#include "log4cplus/logger.h"
-#include "log4cplus/loggingmacros.h"
+#include "logger_macro.h"
 
 #if !ECS_DISABLE_LOGGING
+#include "log4cplus/logger.h"
+#include "log4cplus/loggingmacros.h"
 
 namespace ecs::log
 {
@@ -71,5 +72,3 @@ public:
 } // namespace ecs::log
 
 #endif // !ECS_DISABLE_LOGGING
-
-#include "log/logger_macro.h"
