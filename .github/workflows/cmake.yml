@@ -1,4 +1,4 @@
-name: CMake
+name: Сross-platform build check
 
 on:
   push:
