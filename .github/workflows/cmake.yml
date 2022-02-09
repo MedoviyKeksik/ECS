@@ -3,6 +3,7 @@ name: CMake
 on:
   push:
     branches:
+      - feature_cmake_build
       - master
       - dev
 
