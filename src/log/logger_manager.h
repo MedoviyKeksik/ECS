@@ -1,5 +1,7 @@
 #pragma once
 
+#include "logger_macro.h"
+
 #if !ECS_DISABLE_LOGGING
 
 #include "platform.h"

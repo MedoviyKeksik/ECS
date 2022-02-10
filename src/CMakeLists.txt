@@ -8,9 +8,9 @@ file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 set(SOURCES ${HEADER_FILES} ${SOURCE_FILES})
 
-add_library(${PROJECT_NAME} SHARED ${SOURCES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE log4cplus)
+#target_link_libraries(${PROJECT_NAME} PRIVATE log4cplus)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

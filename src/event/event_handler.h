@@ -72,8 +72,8 @@ public:
     template <typename E, typename... Args>
     void Send(Args&&... eventArgs)
     {
-        //        static_assert(std::is_trivially_copyable<E>::value,
-        //                      "Event is not trivially copuable.");
+//        static_assert(std::is_trivially_copyable<E>::value,
+//                      "Event is not trivially copyable.");
 
         void* pMem =
             this->GetEventMemoryAllocator()->Allocate(sizeof(E), alignof(E));
