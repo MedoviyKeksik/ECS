@@ -1,6 +1,6 @@
 #pragma once
 
-//#define ECS_DISABLE_LOGGING 1
+#define ECS_DISABLE_LOGGING 1
 
 #if !ECS_DISABLE_LOGGING
 #define DECLARE_LOGGER log::Logger* LOGGER;
