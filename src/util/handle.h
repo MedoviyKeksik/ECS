@@ -1,16 +1,14 @@
 #pragma once
 
 #include "api.h"
-
-#include <limits.h>
+#include <algorithm>
+#include <climits>
 
 #pragma warning(push)
 
 #pragma warning(disable : 4293)
 
-namespace ecs
-{
-namespace util
+namespace ecs::util
 {
 namespace internal
 {
@@ -147,7 +145,7 @@ private:
 
         assert(oldSize < Handle::MAX_INDICES && "Max table capacity reached!");
 
-        std::size_t newSize = std::min(oldSize + grow, Handle::MAX_INDICES);
+        std::size_t newSize = std::min(oldSize + grow, (size_t)Handle::MAX_INDICES);
 
         this->m_Table.resize(newSize);
 
@@ -156,7 +154,6 @@ private:
     }
 
 }; // class HandleTable
-} // namespace util
 } // namespace ecs
 
 #pragma warning(pop)
