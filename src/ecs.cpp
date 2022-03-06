@@ -117,6 +117,13 @@ IEntity::IEntity()
 {
 }
 
+IEntity::IEntity(const EntityId& entityId, ComponentManager* componentManager)
+    : isActive(true)
+    , entityId(entityId)
+    , m_ComponentManagerInstance(componentManager)
+{
+}
+
 void IEntity::SetActive(bool active)
 {
     if (this->isActive == active)
@@ -205,16 +212,6 @@ void EntityManager::DestroyEntity(EntityId entityId)
         this->pendingDestroyedEntities.push_back(entityId);
         this->numPendingDestroyedEntities++;
     }
-}
-
-IEntity* EntityManager::GetEntity(EntityId entityId)
-{
-    return this->entityHandleTable[entityId];
-}
-
-EntityId EntityManager::GetEntityId(EntityId::value_type index) const
-{
-    return this->entityHandleTable[index];
 }
 
 SystemManager::SystemManager()

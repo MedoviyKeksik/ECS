@@ -293,6 +293,8 @@ class ECS_API IEntity
 
 public:
     IEntity();
+    IEntity(const ecs::EntityId&   entityId,
+            ecs::ComponentManager* componentManager);
     virtual ~IEntity() = default;
 
     template <typename T>
@@ -359,9 +361,14 @@ class ECS_API Entity : public IEntity
 public:
     static const EntityTypeId STATIC_ENTITY_TYPE_ID;
 
-    Entity(){};
+    Entity() = default;
+    Entity(const ecs::EntityId&   entityId,
+           ecs::ComponentManager* componentManager)
+        : IEntity(entityId, componentManager)
+    {
+    }
 
-    virtual ~Entity(){};
+    virtual ~Entity() = default;
 
 private:
     // Entity destruction always happens through EntityManager !!!
@@ -445,21 +452,31 @@ public:
 
         ecs::EntityId entityId = this->AqcuireEntityId((T*)pObjectMemory);
 
-        ((T*)pObjectMemory)->entityId = entityId;
-        ((T*)pObjectMemory)->m_ComponentManagerInstance =
-            this->componentManager;
+        //        ((T*)pObjectMemory)->entityId = entityId;
+        //        ((T*)pObjectMemory)->m_ComponentManagerInstance =
+        //            this->componentManager;
 
         // create entity inplace
-        IEntity* entity = new (pObjectMemory) T(std::forward<ARGS>(args)...);
+        IEntity* entity = new (pObjectMemory)
+            T(entityId, this->componentManager, std::forward<ARGS>(args)...);
+
+        //        entity->entityId                   = entityId;
+        //        entity->m_ComponentManagerInstance = this->componentManager;
 
         return entityId;
     }
 
     void DestroyEntity(EntityId entityId);
 
-    inline IEntity* GetEntity(EntityId entityId);
+    inline IEntity* GetEntity(EntityId entityId)
+    {
+        return this->entityHandleTable[entityId];
+    }
 
-    inline EntityId GetEntityId(EntityId::value_type index) const;
+    inline EntityId GetEntityId(EntityId::value_type index) const
+    {
+        return this->entityHandleTable[index];
+    }
 
     void RemoveDestroyedEntities();
 
