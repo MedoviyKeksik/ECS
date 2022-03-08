@@ -1,6 +1,6 @@
 #pragma once
 
-#include "logger_macro.h"
+//#include "logger_macro.h"
 
 #if !ECS_DISABLE_LOGGING
 
@@ -8,11 +8,12 @@
 
 // Log4cplus logger support
 #include "log4cplus/logger.h"
+#include "logger.h"
 
 namespace ecs::log
 {
 
-class Logger;
+// class Logger;
 
 namespace internal
 {
@@ -23,8 +24,7 @@ class ECS_API LoggerManager
 
     static constexpr const char* LOG_FILE_NAME  = "ECS.log";
     static constexpr const char* DEFAULT_LOGGER = "ECS";
-    static constexpr const char* LOG_PATTERN =
-        "%d{%H:%M:%S,%q} [%t] %-5p %c{1} %x- %m%n";
+    static constexpr const char* LOG_PATTERN    = "%d{%H:%M:%S,%q} [%t] %-5p %c{1} %x- %m%n";
 
     // This class is not inteeded to be initialized
 
@@ -35,11 +35,11 @@ class ECS_API LoggerManager
     LoggerCache m_Cache;
 
 public:
-    LoggerManager()                     = default;
-    ~LoggerManager()                    = default;
+    LoggerManager();
+    ~LoggerManager();
     LoggerManager(const LoggerManager&) = delete;
     LoggerManager& operator=(LoggerManager&) = delete;
-    Logger* GetLogger(const char* logger = DEFAULT_LOGGER) { return nullptr; };
+    Logger*        GetLogger(const char* logger = DEFAULT_LOGGER);
 
 }; // class LoggerManager
 

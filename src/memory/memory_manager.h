@@ -1,6 +1,7 @@
 #pragma once
 
 #include "api.h"
+#include "log/logger_macro.h"
 #include "memory/allocators/stack_allocator.h"
 
 #define ECS_GLOBAL_MEMORY_CAPACITY 134217728 // 128 MB

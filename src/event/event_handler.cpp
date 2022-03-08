@@ -5,17 +5,15 @@ ecs::event::EventHandler::EventHandler()
     DEFINE_LOGGER("EventHandler")
     LogInfo("Initialize EventHandler!");
 
-    this->eventMemoryAllocator = new EventMemoryAllocator(
-        ECS_EVENT_MEMORY_BUFFER_SIZE,
-        Allocate(ECS_EVENT_MEMORY_BUFFER_SIZE, "EventHandler"));
+    this->eventMemoryAllocator =
+        new EventMemoryAllocator(ECS_EVENT_MEMORY_BUFFER_SIZE, Allocate(ECS_EVENT_MEMORY_BUFFER_SIZE, "EventHandler"));
 
     this->GetEventStorage().reserve(1024);
 }
 
 ecs::event::EventHandler::~EventHandler()
 {
-    for (EventHandler::EventDispatcherMap::iterator it =
-             this->GetEventDispatcherMap().begin();
+    for (EventHandler::EventDispatcherMap::iterator it = this->GetEventDispatcherMap().begin();
          it != this->GetEventDispatcherMap().end();
          ++it)
     {

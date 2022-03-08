@@ -1,16 +1,15 @@
 #pragma once
 
-#define ECS_DISABLE_LOGGING 1
+//#define ECS_DISABLE_LOGGING 1
 
 #if !ECS_DISABLE_LOGGING
-#define DECLARE_LOGGER log::Logger* LOGGER;
-#define DECLARE_STATIC_LOGGER static log::Logger* LOGGER;
+#define DECLARE_LOGGER ecs::log::Logger* LOGGER;
+#define DECLARE_STATIC_LOGGER static ecs::log::Logger* LOGGER;
 
 #define DEFINE_LOGGER(name) LOGGER = ecs::log::internal::GetLogger(name);
-#define DEFINE_STATIC_LOGGER(clazz, name)                                      \
-    log::Logger* clazz::LOGGER = ecs::log::internal::GetLogger(name);
-#define DEFINE_STATIC_LOGGER_TEMPLATE(clazz, T, name)                          \
-    template <class T>                                                         \
+#define DEFINE_STATIC_LOGGER(clazz, name) log::Logger* clazz::LOGGER = ecs::log::internal::GetLogger(name);
+#define DEFINE_STATIC_LOGGER_TEMPLATE(clazz, T, name)                                                                  \
+    template <class T>                                                                                                 \
     log::Logger* clazz<T>::LOGGER = ecs::log::internal::GetLogger(name);
 
 #define LogTrace(format, ...) LOGGER->LogTrace(format, ##__VA_ARGS__);

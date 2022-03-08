@@ -2,20 +2,19 @@
 
 ecs::memory::internal::MemoryManager::MemoryManager()
 {
+    DEFINE_LOGGER("MemoryManager")
+    LogInfo("Initialize MemoryManager!");
     this->globalMemory = malloc(MemoryManager::MEMORY_CAPACITY);
     if (this->globalMemory != nullptr)
     {
     }
     else
     {
-        assert(this->globalMemory != nullptr &&
-               "Failed to allocate global memory.");
+        assert(this->globalMemory != nullptr && "Failed to allocate global memory.");
     }
 
-    this->memoryAllocator =
-        new StackAllocator(MemoryManager::MEMORY_CAPACITY, this->globalMemory);
-    assert(this->memoryAllocator != nullptr &&
-           "Failed to create memory allocator!");
+    this->memoryAllocator = new StackAllocator(MemoryManager::MEMORY_CAPACITY, this->globalMemory);
+    assert(this->memoryAllocator != nullptr && "Failed to create memory allocator!");
 
     this->pendingMemory.clear();
     this->freedMemory.clear();
@@ -31,12 +30,9 @@ ecs::memory::internal::MemoryManager::~MemoryManager()
     this->globalMemory = nullptr;
 }
 
-void* ecs::memory::internal::MemoryManager::Allocate(std::size_t memorySize,
-                                                     const std::string& user)
+void* ecs::memory::internal::MemoryManager::Allocate(std::size_t memorySize, const std::string& user)
 {
-    LogDebug("%s allocated %d bytes of global memory.",
-             user.data() != nullptr ? user.c_str() : "Unknown",
-             memorySize);
+    LogDebug("%s allocated %d bytes of global memory.", user.data() != nullptr ? user.c_str() : "Unknown", memorySize);
     void* pointerMemory = memoryAllocator->Allocate(memorySize, alignof(u8));
     this->pendingMemory.push_back(std::make_pair(user, pointerMemory));
     return pointerMemory;
@@ -54,11 +50,10 @@ void ecs::memory::internal::MemoryManager::Free(void* pointerMemory)
         {
             check = false;
 
-            const auto& it = std::find_if(
-                this->freedMemory.begin(),
-                this->freedMemory.end(),
-                [&](const void* pointer)
-                { return pointer == this->pendingMemory.back().second; });
+            const auto& it =
+                std::find_if(this->freedMemory.begin(),
+                             this->freedMemory.end(),
+                             [&](const void* pointer) { return pointer == this->pendingMemory.back().second; });
 
             if (it != this->freedMemory.end())
             {
@@ -78,8 +73,7 @@ void ecs::memory::internal::MemoryManager::Free(void* pointerMemory)
 
 void ecs::memory::internal::MemoryManager::CheckMemoryLeaks()
 {
-    assert(!(this->freedMemory.size() > 0 && this->pendingMemory.size() == 0) &&
-           "Implementation failure");
+    assert(!(this->freedMemory.size() > 0 && this->pendingMemory.size() == 0) && "Implementation failure");
 
     if (this->pendingMemory.size() > 0)
     {
@@ -104,10 +98,7 @@ void ecs::memory::internal::MemoryManager::CheckMemoryLeaks()
 
             if (isFreed == false)
             {
-                LogFatal(
-                    "\'%s\' memory user didn't release allocated memory %p!",
-                    i.first.c_str(),
-                    i.second)
+                LogFatal("\'%s\' memory user didn't release allocated memory %p!", i.first.c_str(), i.second)
             }
         }
     }

@@ -1,12 +1,9 @@
 #pragma once
 
-#include "platform.h"
-
-#include "logger_macro.h"
-
 #if !ECS_DISABLE_LOGGING
 #include "log4cplus/logger.h"
 #include "log4cplus/loggingmacros.h"
+#include "platform.h"
 
 namespace ecs::log
 {
@@ -27,9 +24,7 @@ public:
     template <typename... Args>
     inline void LogTrace(const char* fmt, Args... args)
     {
-        LOG4CPLUS_TRACE_FMT(this->m_logger,
-                            (const log4cplus::tchar*)fmt,
-                            std::forward<Args>(args)...);
+        LOG4CPLUS_TRACE_FMT(this->m_logger, (const log4cplus::tchar*)fmt, std::forward<Args>(args)...);
     }
 
     // debug

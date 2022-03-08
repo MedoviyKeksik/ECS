@@ -45,11 +45,8 @@ private:
 public:
     inline EntityManager* GetEntityManager() { return ecsEntityManager; }
 
-    inline ComponentManager* GetComponentManager()
-    {
-        return ecsComponentManager;
-    }
-    inline SystemManager* GetSystemManager() { return ecsSystemManager; }
+    inline ComponentManager* GetComponentManager() { return ecsComponentManager; }
+    inline SystemManager*    GetSystemManager() { return ecsSystemManager; }
 
     /**
      * Broadcasts an event.
@@ -72,8 +69,7 @@ public:
 private:
     // Add event callback
     template <class E>
-    inline void SubscribeEvent(
-        event::internal::IEventDelegate* const eventDelegate)
+    inline void SubscribeEvent(event::internal::IEventDelegate* const eventDelegate)
     {
         ecsEventHandler->AddEventCallback<E>(eventDelegate);
     }

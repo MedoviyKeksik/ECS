@@ -28,10 +28,7 @@ public:
     {
     }
 
-    virtual IEventDelegate* clone() override
-    {
-        return new EventDelegate(this->receiver, this->callback);
-    }
+    virtual IEventDelegate* clone() override { return new EventDelegate(this->receiver, this->callback); }
 
     virtual inline void invoke(const IEvent* const e) override
     {
@@ -40,9 +37,7 @@ public:
 
     virtual inline EventDelegateId GetDelegateId() const override
     {
-        static const EventDelegateId DELEGATE_ID{
-            typeid(Class).hash_code() ^ typeid(Callback).hash_code()
-        };
+        static const EventDelegateId DELEGATE_ID{ typeid(Class).hash_code() ^ typeid(Callback).hash_code() };
         return DELEGATE_ID;
     }
 
@@ -65,19 +60,15 @@ public:
             return false;
         }
 
-        return ((this->callback == delegate->callback) &&
-                (this->receiver == delegate->receiver));
+        return ((this->callback == delegate->callback) && (this->receiver == delegate->receiver));
     }
 
 private:
-    inline void  SetReceiver(Class* receiver) { this->receiver = receiver; }
-    inline auto& GetReceiver() { return this->receiver; }
+    inline void        SetReceiver(Class* receiver) { this->receiver = receiver; }
+    inline auto&       GetReceiver() { return this->receiver; }
     inline const auto& GetReceiver() const { return this->receiver; }
 
-    inline void SetCallback(const Callback& callback)
-    {
-        this->callback = callback;
-    }
+    inline void        SetCallback(const Callback& callback) { this->callback = callback; }
     inline auto&       GetCallback() { return this->callback; }
     inline const auto& GetCallback() const { return this->callback; }
 

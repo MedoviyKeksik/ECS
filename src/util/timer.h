@@ -17,10 +17,7 @@ public:
 
     void Reset(){};
 
-    [[nodiscard]] inline TimeStamp GetTimeStamp() const
-    {
-        return TimeStamp(this->m_Elapsed.count());
-    }
+    [[nodiscard]] inline TimeStamp GetTimeStamp() const { return TimeStamp(this->m_Elapsed.count()); }
 
 private:
     Elapsed m_Elapsed;

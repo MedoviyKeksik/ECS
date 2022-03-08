@@ -20,11 +20,11 @@ public:
     IEventDelegate()          = default;
     virtual ~IEventDelegate() = default;
 
-    virtual inline void            invoke(const IEvent* const e)          = 0;
-    virtual inline EventDelegateId GetDelegateId() const                  = 0;
-    virtual inline u64             GetStaticEventTypeId() const           = 0;
-    virtual bool            operator==(const IEventDelegate* other) const = 0;
-    virtual IEventDelegate* clone()                                       = 0;
+    virtual inline void            invoke(const IEvent* const e)                 = 0;
+    virtual inline EventDelegateId GetDelegateId() const                         = 0;
+    virtual inline u64             GetStaticEventTypeId() const                  = 0;
+    virtual bool                   operator==(const IEventDelegate* other) const = 0;
+    virtual IEventDelegate*        clone()                                       = 0;
 
 }; //  IEventDelegate;
 } // namespace internal
