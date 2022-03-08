@@ -1,12 +1,9 @@
 #pragma once
 
-#include "platform.h"
-
-#include "logger_macro.h"
-
 #if !ECS_DISABLE_LOGGING
 #include "log4cplus/logger.h"
 #include "log4cplus/loggingmacros.h"
+#include "platform.h"
 
 namespace ecs::log
 {

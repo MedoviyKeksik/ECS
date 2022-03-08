@@ -8,6 +8,7 @@
 #define ECS_SYSTEM_MEMORY_BUFFER_SIZE 8388608 // 8MB
 
 #include "log/logger.h"
+#include "log/logger_manager.h"
 
 #include "platform.h"
 
@@ -19,7 +20,6 @@ namespace internal
 {
 #if !ECS_DISABLE_LOGGING
 
-class LoggerManager;
 ECS_API extern LoggerManager* ecsLoggerManager;
 
 /**

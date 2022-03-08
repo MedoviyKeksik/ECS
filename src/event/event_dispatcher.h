@@ -5,6 +5,7 @@
 #include "api.h"
 
 #include "event/ievent_dispatcher.h"
+#include "log/logger_macro.h"
 
 namespace ecs
 {
