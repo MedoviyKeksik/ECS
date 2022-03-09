@@ -14,16 +14,12 @@ class ECS_API IEventListener
     using RegisteredCallbacks = std::list<internal::IEventDelegate*>;
 
 private:
-    inline void SetRegisteredCallbacks(
-        const RegisteredCallbacks& registeredCallbacks)
+    inline void SetRegisteredCallbacks(const RegisteredCallbacks& registeredCallbacks)
     {
         this->registeredCallbacks = registeredCallbacks;
     }
-    inline auto& GetRegisteredCallbacks() { return this->registeredCallbacks; }
-    inline const auto& GetRegisteredCallbacks() const
-    {
-        return this->registeredCallbacks;
-    }
+    inline auto&       GetRegisteredCallbacks() { return this->registeredCallbacks; }
+    inline const auto& GetRegisteredCallbacks() const { return this->registeredCallbacks; }
 
 public:
     IEventListener() = default;
@@ -32,8 +28,7 @@ public:
     template <typename E, typename C>
     inline void RegisterEventCallback(void (C::*Callback)(const E* const))
     {
-        internal::IEventDelegate* eventDelegate =
-            new internal::EventDelegate<C, E>(static_cast<C*>(this), Callback);
+        internal::IEventDelegate* eventDelegate = new internal::EventDelegate<C, E>(static_cast<C*>(this), Callback);
 
         this->GetRegisteredCallbacks().push_back(eventDelegate);
         ecsEngine->SubscribeEvent<E>(eventDelegate);
@@ -48,9 +43,8 @@ public:
         {
             if (cb->GetDelegateId() == delegate.GetDelegateId())
             {
-                this->GetRegisteredCallbacks().remove_if(
-                    [&](const internal::IEventDelegate* other)
-                    { return other->operator==(cb); });
+                this->GetRegisteredCallbacks().remove_if([&](const internal::IEventDelegate* other)
+                                                         { return other->operator==(cb); });
 
                 ecsEngine->UnsubscribeEvent(&delegate);
                 break;

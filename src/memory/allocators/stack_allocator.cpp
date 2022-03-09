@@ -2,8 +2,7 @@
 
 #include <cassert>
 
-ecs::memory::allocator::StackAllocator::StackAllocator(
-    const std::size_t memorySize, const void* memory)
+ecs::memory::allocator::StackAllocator::StackAllocator(const std::size_t memorySize, const void* memory)
     : IAllocator(memorySize, memory)
 {
 }
@@ -13,8 +12,7 @@ ecs::memory::allocator::StackAllocator::~StackAllocator()
     this->Clear();
 }
 
-void* ecs::memory::allocator::StackAllocator::Allocate(const std::size_t size,
-                                                       const u8 alignment)
+void* ecs::memory::allocator::StackAllocator::Allocate(const std::size_t size, const u8 alignment)
 {
     assert(size > 0 && "allocate called with memorySize = 0.");
 
@@ -29,8 +27,7 @@ void* ecs::memory::allocator::StackAllocator::Allocate(const std::size_t size,
 
     asUptr += this->memoryUsed;
 
-    u8 adjustment =
-        GetAdjustment(asVoidPointer, alignment, sizeof(AllocatorMetaInfo));
+    u8 adjustment = GetAdjustment(asVoidPointer, alignment, sizeof(AllocatorMetaInfo));
 
     if (this->memoryUsed + size + adjustment > this->memorySize)
     {
@@ -60,8 +57,7 @@ void ecs::memory::allocator::StackAllocator::Free(void* memory)
 
     asUptr -= sizeof(AllocatorMetaInfo);
 
-    this->memoryUsed -= ((uptr)this->memoryAddress + this->memoryUsed) -
-                        ((uptr)memory + asMetaInfo->adjusment);
+    this->memoryUsed -= ((uptr)this->memoryAddress + this->memoryUsed) - ((uptr)memory + asMetaInfo->adjusment);
     this->memoryAllocationsCount--;
 }
 

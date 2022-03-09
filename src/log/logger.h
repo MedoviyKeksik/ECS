@@ -24,9 +24,7 @@ public:
     template <typename... Args>
     inline void LogTrace(const char* fmt, Args... args)
     {
-        LOG4CPLUS_TRACE_FMT(this->m_logger,
-                            (const log4cplus::tchar*)fmt,
-                            std::forward<Args>(args)...);
+        LOG4CPLUS_TRACE_FMT(this->m_logger, (const log4cplus::tchar*)fmt, std::forward<Args>(args)...);
     }
 
     // debug

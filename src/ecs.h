@@ -36,19 +36,10 @@ public:
     }
     virtual ~IComponent() = default;
 
-    inline const bool operator==(const IComponent& other) const
-    {
-        return hashValue == other.hashValue;
-    }
-    inline const bool operator!=(const IComponent& other) const
-    {
-        return hashValue == other.hashValue;
-    }
+    inline const bool operator==(const IComponent& other) const { return hashValue == other.hashValue; }
+    inline const bool operator!=(const IComponent& other) const { return hashValue == other.hashValue; }
 
-    inline const ComponentId GetComponentId() const
-    {
-        return this->componentId;
-    }
+    inline const ComponentId GetComponentId() const { return this->componentId; }
 
     inline const EntityId GetOwner() const { return this->owner; }
 
@@ -73,17 +64,13 @@ public:
 
     virtual ~Component() = default;
 
-    inline ComponentTypeId GetStaticComponentTypeID() const
-    {
-        return STATIC_COMPONENT_TYPE_ID;
-    }
+    inline ComponentTypeId GetStaticComponentTypeID() const { return STATIC_COMPONENT_TYPE_ID; }
 };
 
 // This private member only exists to force the compiler to create an instance
 // of Component T, which will set its unique identifier.
 template <typename T>
-const ComponentTypeId Component<T>::STATIC_COMPONENT_TYPE_ID =
-    util::internal::FamilyTypeID<IComponent>::Get<T>();
+const ComponentTypeId Component<T>::STATIC_COMPONENT_TYPE_ID = util::internal::FamilyTypeID<IComponent>::Get<T>();
 
 class ECS_API ComponentManager : memory::GlobalMemoryUser
 {
@@ -101,17 +88,15 @@ class ECS_API ComponentManager : memory::GlobalMemoryUser
     };
 
     template <typename T>
-    class ComponentContainer
-        : public memory::MemoryChunkAllocator<T, COMPONENT_T_CHUNK_SIZE>,
-          public IComponentContainer
+    class ComponentContainer : public memory::MemoryChunkAllocator<T, COMPONENT_T_CHUNK_SIZE>,
+                               public IComponentContainer
     {
         ComponentContainer(const ComponentContainer&) = delete;
         ComponentContainer& operator=(ComponentContainer&) = delete;
 
     public:
         ComponentContainer()
-            : memory::MemoryChunkAllocator<T, COMPONENT_T_CHUNK_SIZE>(
-                  "ComponentManager")
+            : memory::MemoryChunkAllocator<T, COMPONENT_T_CHUNK_SIZE>("ComponentManager")
         {
         }
 
@@ -148,25 +133,21 @@ public:
     T* AddComponent(const EntityId entityId, ARGS&&... args)
     {
         // hash operator for hashing entity and component ids
-        static constexpr std::hash<ComponentId> entityComponentIdHasher{
-            std::hash<ComponentId>()
-        };
+        static constexpr std::hash<ComponentId> entityComponentIdHasher{ std::hash<ComponentId>() };
 
         const ComponentTypeId CTID = T::STATIC_COMPONENT_TYPE_ID;
 
         // aqcuire memory for new component object of type T
         void* pObjectMemory = GetComponentContainer<T>()->CreateObject();
 
-        ComponentId componentId = this->AqcuireComponentId((T*)pObjectMemory);
+        ComponentId componentId          = this->AqcuireComponentId((T*)pObjectMemory);
         ((T*)pObjectMemory)->componentId = componentId;
 
         // create component inplace
-        IComponent* component =
-            new (pObjectMemory) T(std::forward<ARGS>(args)...);
+        IComponent* component = new (pObjectMemory) T(std::forward<ARGS>(args)...);
 
         component->owner     = entityId;
-        component->hashValue = entityComponentIdHasher(entityId) ^
-                               (entityComponentIdHasher(componentId) << 1);
+        component->hashValue = entityComponentIdHasher(entityId) ^ (entityComponentIdHasher(componentId) << 1);
 
         // create mapping from entity id its component id
         MapEntityComponent(entityId, componentId, CTID);
@@ -179,8 +160,7 @@ public:
     {
         const ComponentTypeId componentTypeId = T::STATIC_COMPONENT_TYPE_ID;
 
-        const ComponentId componentId =
-            this->entityComponentMap[entityId.index][componentTypeId];
+        const ComponentId componentId = this->entityComponentMap[entityId.index][componentTypeId];
 
         IComponent* component = this->componentLookupTable[componentId];
 
@@ -201,8 +181,7 @@ public:
     {
         const ComponentTypeId componentTypeId = T::STATIC_COMPONENT_TYPE_ID;
 
-        const ComponentId componentId =
-            this->entityComponentMap[entityId.index][componentTypeId];
+        const ComponentId componentId = this->entityComponentMap[entityId.index][componentTypeId];
 
         // entity has no component of type T
         if (componentId == INVALID_COMPONENT_ID)
@@ -229,12 +208,12 @@ private:
     {
         ComponentTypeId componentTypeId = T::STATIC_COMPONENT_TYPE_ID;
 
-        auto it = this->componentContainerRegistry.find(componentTypeId);
+        auto                   it = this->componentContainerRegistry.find(componentTypeId);
         ComponentContainer<T>* cc = nullptr;
 
         if (it == this->componentContainerRegistry.end())
         {
-            cc = new ComponentContainer<T>();
+            cc                                                = new ComponentContainer<T>();
             this->componentContainerRegistry[componentTypeId] = cc;
         }
         else
@@ -257,8 +236,7 @@ private:
         }
 
         // increase component LUT size
-        this->componentLookupTable.resize(
-            this->componentLookupTable.size() + COMPONENT_LUT_GROW, nullptr);
+        this->componentLookupTable.resize(this->componentLookupTable.size() + COMPONENT_LUT_GROW, nullptr);
 
         this->componentLookupTable[i] = component;
         return i;
@@ -266,17 +244,12 @@ private:
 
     void ReleaseComponentId(ComponentId id);
 
-    void MapEntityComponent(EntityId        entityId,
-                            ComponentId     componentId,
-                            ComponentTypeId componentTypeId);
+    void MapEntityComponent(EntityId entityId, ComponentId componentId, ComponentTypeId componentTypeId);
 
-    void UnmapEntityComponent(EntityId        entityId,
-                              ComponentId     componentId,
-                              ComponentTypeId componentTypeId);
+    void UnmapEntityComponent(EntityId entityId, ComponentId componentId, ComponentTypeId componentTypeId);
 
 private:
-    using ComponentContainerRegistry =
-        std::unordered_map<ComponentTypeId, IComponentContainer*>;
+    using ComponentContainerRegistry = std::unordered_map<ComponentTypeId, IComponentContainer*>;
     ComponentContainerRegistry componentContainerRegistry;
 
     using ComponentLookupTable = std::vector<IComponent*>;
@@ -293,22 +266,19 @@ class ECS_API IEntity
 
 public:
     IEntity();
-    IEntity(const ecs::EntityId&   entityId,
-            ecs::ComponentManager* componentManager);
+    IEntity(const ecs::EntityId& entityId, ecs::ComponentManager* componentManager);
     virtual ~IEntity() = default;
 
     template <typename T>
     T* GetComponent() const
     {
-        return this->m_ComponentManagerInstance->GetComponent<T>(
-            this->entityId);
+        return this->m_ComponentManagerInstance->GetComponent<T>(this->entityId);
     }
 
     template <typename T, class... P>
     T* AddComponent(P&&... param)
     {
-        return this->m_ComponentManagerInstance->AddComponent<T>(
-            this->entityId, std::forward<P>(param)...);
+        return this->m_ComponentManagerInstance->AddComponent<T>(this->entityId, std::forward<P>(param)...);
     }
 
     template <typename T>
@@ -320,22 +290,10 @@ public:
     virtual void OnEnable() {}
     virtual void OnDisable() {}
 
-    inline bool operator==(const IEntity& rhs) const
-    {
-        return this->entityId == rhs.entityId;
-    }
-    inline bool operator!=(const IEntity& rhs) const
-    {
-        return this->entityId != rhs.entityId;
-    }
-    inline bool operator==(const IEntity* rhs) const
-    {
-        return this->entityId == rhs->entityId;
-    }
-    inline bool operator!=(const IEntity* rhs) const
-    {
-        return this->entityId != rhs->entityId;
-    }
+    inline bool operator==(const IEntity& rhs) const { return this->entityId == rhs.entityId; }
+    inline bool operator!=(const IEntity& rhs) const { return this->entityId != rhs.entityId; }
+    inline bool operator==(const IEntity* rhs) const { return this->entityId == rhs->entityId; }
+    inline bool operator!=(const IEntity* rhs) const { return this->entityId != rhs->entityId; }
 
     virtual const EntityTypeId GetStaticEntityTypeID() const = 0;
 
@@ -362,8 +320,7 @@ public:
     static const EntityTypeId STATIC_ENTITY_TYPE_ID;
 
     Entity() = default;
-    Entity(const ecs::EntityId&   entityId,
-           ecs::ComponentManager* componentManager)
+    Entity(const ecs::EntityId& entityId, ecs::ComponentManager* componentManager)
         : IEntity(entityId, componentManager)
     {
     }
@@ -376,16 +333,12 @@ private:
     //    void operator delete[](void*) = delete;
 
 public:
-    virtual const EntityTypeId GetStaticEntityTypeID() const override
-    {
-        return STATIC_ENTITY_TYPE_ID;
-    }
+    virtual const EntityTypeId GetStaticEntityTypeID() const override { return STATIC_ENTITY_TYPE_ID; }
 };
 
 // set unique type id for this Entity<T>
 template <typename E>
-const EntityTypeId Entity<E>::STATIC_ENTITY_TYPE_ID =
-    util::internal::FamilyTypeID<IEntity>::Get<E>();
+const EntityTypeId Entity<E>::STATIC_ENTITY_TYPE_ID = util::internal::FamilyTypeID<IEntity>::Get<E>();
 
 using EntityHandleTable = util::HandleTable<IEntity, EntityId>;
 
@@ -404,14 +357,11 @@ class ECS_API EntityManager
     }; // class IEntityContainer
 
     template <typename T>
-    class EntityContainer
-        : public memory::MemoryChunkAllocator<T, ENITY_T_CHUNK_SIZE>,
-          public IEntityContainer
+    class EntityContainer : public memory::MemoryChunkAllocator<T, ENITY_T_CHUNK_SIZE>, public IEntityContainer
     {
     public:
         EntityContainer()
-            : memory::MemoryChunkAllocator<T, ENITY_T_CHUNK_SIZE>(
-                  "EntityManager")
+            : memory::MemoryChunkAllocator<T, ENITY_T_CHUNK_SIZE>("EntityManager")
         {
         }
         virtual ~EntityContainer() {}
@@ -457,8 +407,7 @@ public:
         //            this->componentManager;
 
         // create entity inplace
-        IEntity* entity = new (pObjectMemory)
-            T(entityId, this->componentManager, std::forward<ARGS>(args)...);
+        IEntity* entity = new (pObjectMemory) T(entityId, this->componentManager, std::forward<ARGS>(args)...);
 
         //        entity->entityId                   = entityId;
         //        entity->m_ComponentManagerInstance = this->componentManager;
@@ -468,15 +417,9 @@ public:
 
     void DestroyEntity(EntityId entityId);
 
-    inline IEntity* GetEntity(EntityId entityId)
-    {
-        return this->entityHandleTable[entityId];
-    }
+    inline IEntity* GetEntity(EntityId entityId) { return this->entityHandleTable[entityId]; }
 
-    inline EntityId GetEntityId(EntityId::value_type index) const
-    {
-        return this->entityHandleTable[index];
-    }
+    inline EntityId GetEntityId(EntityId::value_type index) const { return this->entityHandleTable[index]; }
 
     void RemoveDestroyedEntities();
 
@@ -506,7 +449,7 @@ private:
     void ReleaseEntityId(EntityId id);
 
 private:
-    using EntityRegistry = std::unordered_map<EntityTypeId, IEntityContainer*>;
+    using EntityRegistry           = std::unordered_map<EntityTypeId, IEntityContainer*>;
     using PendingDestroyedEntities = std::vector<EntityId>;
     EntityRegistry           entityRegistry;
     PendingDestroyedEntities pendingDestroyedEntities;
@@ -521,25 +464,22 @@ class System;
 using SystemTypeId   = TypeID;
 using SystemPriority = u16;
 
-static const SystemTypeId   INVALID_SYSTEMID = INVALID_TYPE_ID;
-static const SystemPriority LOWEST_SYSTEM_PRIORITY =
-    std::numeric_limits<SystemPriority>::min();
+static const SystemTypeId   INVALID_SYSTEMID          = INVALID_TYPE_ID;
+static const SystemPriority LOWEST_SYSTEM_PRIORITY    = std::numeric_limits<SystemPriority>::min();
 static const SystemPriority VERY_LOW_SYSTEM_PRIORITY  = 99;
 static const SystemPriority LOW_SYSTEM_PRIORITY       = 100;
 static const SystemPriority NORMAL_SYSTEM_PRIORITY    = 200;
 static const SystemPriority MEDIUM_SYSTEM_PRIORITY    = 300;
 static const SystemPriority HIGH_SYSTEM_PRIORITY      = 400;
 static const SystemPriority VERY_HIGH_SYSTEM_PRIORITY = 401;
-static const SystemPriority HIGHEST_SYSTEM_PRIORITY =
-    std::numeric_limits<SystemPriority>::max();
+static const SystemPriority HIGHEST_SYSTEM_PRIORITY   = std::numeric_limits<SystemPriority>::max();
 
 class ECS_API ISystem
 {
     friend class SystemManager;
 
 protected:
-    ISystem(SystemPriority priority          = NORMAL_SYSTEM_PRIORITY,
-            f32            updateInterval_ms = -1.0f)
+    ISystem(SystemPriority priority = NORMAL_SYSTEM_PRIORITY, f32 updateInterval_ms = -1.0f)
         : systemPriority(priority)
         , updateInterval(updateInterval_ms)
         , timeSinceLastUpdate()
@@ -596,32 +536,25 @@ public:
 
         // avoid multiple registrations of the same system
         auto it = this->systemRegistry.find(staticSystemTypeId);
-        if ((this->systemRegistry.find(staticSystemTypeId) !=
-             this->systemRegistry.end()) &&
-            (it->second != nullptr))
+        if ((this->systemRegistry.find(staticSystemTypeId) != this->systemRegistry.end()) && (it->second != nullptr))
             return (T*)it->second;
 
-        T*    system = nullptr;
-        void* pSystemMem =
-            this->systemAllocator->Allocate(sizeof(T), alignof(T));
+        T*    system     = nullptr;
+        void* pSystemMem = this->systemAllocator->Allocate(sizeof(T), alignof(T));
         if (pSystemMem != nullptr)
         {
 
             ((T*)pSystemMem)->systemManager = this;
 
             // create new system
-            system = new (pSystemMem) T(std::forward<ARGS>(systemArgs)...);
+            system                                   = new (pSystemMem) T(std::forward<ARGS>(systemArgs)...);
             this->systemRegistry[staticSystemTypeId] = system;
 
-            LogInfo("System \'%s\' (%d bytes) created.",
-                    typeid(T).name(),
-                    sizeof(T));
+            LogInfo("System \'%s\' (%d bytes) created.", typeid(T).name(), sizeof(T));
         }
         else
         {
-            LogError("Unable to create system \'%s\' (%d bytes).",
-                     typeid(T).name(),
-                     sizeof(T));
+            LogError("Unable to create system \'%s\' (%d bytes).", typeid(T).name(), sizeof(T));
             assert(true);
         }
 
@@ -648,18 +581,14 @@ public:
         if (this->systemDependencyMatrix[TARGET_ID][DEPEND_ID] != true)
         {
             this->systemDependencyMatrix[TARGET_ID][DEPEND_ID] = true;
-            LogInfo("added '%s' as dependency to '%s'",
-                    dependency->GetSystemTypeName(),
-                    target->GetSystemTypeName())
+            LogInfo("added '%s' as dependency to '%s'", dependency->GetSystemTypeName(), target->GetSystemTypeName())
         }
 
         // this->UpdateSystemWorkOrder();
     }
 
     template <typename Target_, class Dependency_, class... Dependencies>
-    void AddSystemDependency(Target_     target,
-                             Dependency_ dependency,
-                             Dependencies&&... dependencies)
+    void AddSystemDependency(Target_ target, Dependency_ dependency, Dependencies&&... dependencies)
     {
         const u64 TARGET_ID = target->GetStaticSystemTypeID();
         const u64 DEPEND_ID = dependency->GetStaticSystemTypeID();
@@ -667,13 +596,10 @@ public:
         if (this->systemDependencyMatrix[TARGET_ID][DEPEND_ID] != true)
         {
             this->systemDependencyMatrix[TARGET_ID][DEPEND_ID] = true;
-            LogInfo("added '%s' as dependency to '%s'",
-                    dependency->GetSystemTypeName(),
-                    target->GetSystemTypeName())
+            LogInfo("added '%s' as dependency to '%s'", dependency->GetSystemTypeName(), target->GetSystemTypeName())
         }
 
-        this->AddSystemDependency(target,
-                                  std::forward<Dependencies>(dependencies)...);
+        this->AddSystemDependency(target, std::forward<Dependencies>(dependencies)...);
     }
 
     void UpdateSystemWorkOrder();
@@ -777,8 +703,7 @@ public:
     void SetSystemWorkState(SystemWorkStateMask mask);
 
     template <typename... ActiveSystems>
-    SystemWorkStateMask GenerateActiveSystemWorkState(
-        ActiveSystems&&... activeSystems)
+    SystemWorkStateMask GenerateActiveSystemWorkState(ActiveSystems&&... activeSystems)
     {
         SystemWorkStateMask mask(this->systemWorkOrder.size(), false);
         std::list<ISystem*> AS = { activeSystems... };
@@ -786,8 +711,7 @@ public:
         {
             for (int i = 0; i < this->systemWorkOrder.size(); ++i)
             {
-                if (this->systemWorkOrder[i]->GetStaticSystemTypeID() ==
-                    s->GetStaticSystemTypeID())
+                if (this->systemWorkOrder[i]->GetStaticSystemTypeID() == s->GetStaticSystemTypeID())
                 {
                     mask[i] = true;
                     break;
@@ -824,10 +748,7 @@ public:
 
     static const SystemTypeId STATIC_SYSTEM_TYPE_ID;
 
-    virtual inline const SystemTypeId GetStaticSystemTypeID() const
-    {
-        return STATIC_SYSTEM_TYPE_ID;
-    }
+    virtual inline const SystemTypeId GetStaticSystemTypeID() const { return STATIC_SYSTEM_TYPE_ID; }
 
     virtual inline const char* GetSystemTypeName() const override
     {
@@ -838,8 +759,7 @@ public:
     template <typename... Dependencies>
     void AddDependencies(Dependencies&&... dependencies)
     {
-        this->systemManager->AddSystemDependency(
-            this, std::forward<Dependencies>(dependencies)...);
+        this->systemManager->AddSystemDependency(this, std::forward<Dependencies>(dependencies)...);
     }
 
     virtual void PreUpdate(f32 dt) override {}
@@ -854,7 +774,6 @@ private:
 }; // class System<T>
 
 template <typename T>
-const SystemTypeId System<T>::STATIC_SYSTEM_TYPE_ID =
-    util::internal::FamilyTypeID<ISystem>::Get<T>();
+const SystemTypeId System<T>::STATIC_SYSTEM_TYPE_ID = util::internal::FamilyTypeID<ISystem>::Get<T>();
 
 } // namespace ecs

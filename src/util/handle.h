@@ -15,14 +15,11 @@ namespace util
 namespace internal
 {
 
-template <typename handle_value_type,
-          std::size_t version_bits,
-          std::size_t index_bits>
+template <typename handle_value_type, std::size_t version_bits, std::size_t index_bits>
 union Handle
 {
-    static_assert(
-        sizeof(handle_value_type) * CHAR_BIT >= (version_bits + index_bits),
-        "Invalid handle layout. More bits used than base value type can hold!");
+    static_assert(sizeof(handle_value_type) * CHAR_BIT >= (version_bits + index_bits),
+                  "Invalid handle layout. More bits used than base value type can hold!");
 
     using value_type = handle_value_type;
 
@@ -31,13 +28,9 @@ union Handle
 
     static constexpr value_type MIN_VERISON{ 0 };
     static constexpr value_type MAX_VERSION{ (1U << NUM_VERSION_BITS) - 2U };
-    static constexpr value_type MAX_INDICES{
-        ((value_type)1U << NUM_INDEX_BITS) - 2U
-    };
+    static constexpr value_type MAX_INDICES{ ((value_type)1U << NUM_INDEX_BITS) - 2U };
 
-    static constexpr value_type INVALID_HANDLE{
-        std::numeric_limits<value_type>::max()
-    };
+    static constexpr value_type INVALID_HANDLE{ std::numeric_limits<value_type>::max() };
 
 public:
     struct
@@ -91,10 +84,9 @@ public:
             {
                 this->m_Table[i].second = rawObject;
 
-                this->m_Table[i].first =
-                    ((this->m_Table[i].first + 1) > Handle::MAX_VERSION)
-                        ? Handle::MIN_VERISON
-                        : this->m_Table[i].first + 1;
+                this->m_Table[i].first = ((this->m_Table[i].first + 1) > Handle::MAX_VERSION)
+                                             ? Handle::MIN_VERISON
+                                             : this->m_Table[i].first + 1;
 
                 return Handle(i, this->m_Table[i].first);
             }
@@ -109,16 +101,12 @@ public:
 
     void ReleaseHandle(Handle handle)
     {
-        assert((handle.index < this->m_Table.size() &&
-                handle.version == this->m_Table[handle.index].first) &&
+        assert((handle.index < this->m_Table.size() && handle.version == this->m_Table[handle.index].first) &&
                "Invalid handle!");
         this->m_Table[handle.index].second = nullptr;
     }
 
-    inline bool IsExpired(Handle handle) const
-    {
-        return this->m_Table[handle.index].first != handle.version;
-    }
+    inline bool IsExpired(Handle handle) const { return this->m_Table[handle.index].first != handle.version; }
 
     inline Handle operator[](typename Handle::value_type index) const
     {
@@ -128,12 +116,9 @@ public:
 
     inline T* operator[](Handle handle)
     {
-        assert((handle.index < this->m_Table.size() &&
-                handle.version == this->m_Table[handle.index].first) &&
+        assert((handle.index < this->m_Table.size() && handle.version == this->m_Table[handle.index].first) &&
                "Invalid handle!");
-        return (this->m_Table[handle.index].first == handle.version
-                    ? this->m_Table[handle.index].second
-                    : nullptr);
+        return (this->m_Table[handle.index].first == handle.version ? this->m_Table[handle.index].second : nullptr);
     }
 
 private:

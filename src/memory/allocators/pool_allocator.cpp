@@ -3,11 +3,10 @@
 #include <cassert>
 #include <cmath>
 
-ecs::memory::allocator::PoolAllocator::PoolAllocator(
-    const std::size_t memorySize,
-    const void*       memory,
-    const std::size_t objectSize,
-    const u8          objectAlignment)
+ecs::memory::allocator::PoolAllocator::PoolAllocator(const std::size_t memorySize,
+                                                     const void*       memory,
+                                                     const std::size_t objectSize,
+                                                     const u8          objectAlignment)
     : IAllocator(memorySize, memory)
     , objectSize(objectSize)
     , objectAlignment(objectAlignment)
@@ -20,8 +19,7 @@ ecs::memory::allocator::PoolAllocator::~PoolAllocator()
     this->freeList = nullptr;
 }
 
-void* ecs::memory::allocator::PoolAllocator::Allocate(const std::size_t size,
-                                                      const u8 alignment)
+void* ecs::memory::allocator::PoolAllocator::Allocate(const std::size_t size, const u8 alignment)
 {
     assert(size > 0 && "allocate called with memorySize = 0.");
     assert(size == this->objectSize && alignment == this->objectAlignment);
@@ -52,9 +50,8 @@ void ecs::memory::allocator::PoolAllocator::Free(void* memory)
 
 void ecs::memory::allocator::PoolAllocator::Clear()
 {
-    u8 adjustment = GetAdjustment(this->memoryAddress, this->objectAlignment);
-    std::size_t numberObjects =
-        (std::size_t)floor((this->memorySize - adjustment) / this->objectSize);
+    u8          adjustment    = GetAdjustment(this->memoryAddress, this->objectAlignment);
+    std::size_t numberObjects = (std::size_t)floor((this->memorySize - adjustment) / this->objectSize);
 
     union
     {

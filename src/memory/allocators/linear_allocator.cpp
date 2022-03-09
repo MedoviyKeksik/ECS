@@ -2,8 +2,7 @@
 
 #include <cassert>
 
-ecs::memory::allocator::LinearAllocator::LinearAllocator(
-    const std::size_t memorySize, const void* memory)
+ecs::memory::allocator::LinearAllocator::LinearAllocator(const std::size_t memorySize, const void* memory)
     : IAllocator(memorySize, memory)
 {
 }
@@ -13,8 +12,7 @@ ecs::memory::allocator::LinearAllocator::~LinearAllocator()
     this->Clear();
 }
 
-void* ecs::memory::allocator::LinearAllocator::Allocate(const std::size_t size,
-                                                        const u8 alignment)
+void* ecs::memory::allocator::LinearAllocator::Allocate(const std::size_t size, const u8 alignment)
 {
     assert(size > 0 && "allocate calles with memSize = 0.");
 
@@ -44,9 +42,7 @@ void* ecs::memory::allocator::LinearAllocator::Allocate(const std::size_t size,
 
 void ecs::memory::allocator::LinearAllocator::Free(void* memory)
 {
-    assert(
-        false &&
-        "Linear allocators do not support free operations. Use clear unstead.");
+    assert(false && "Linear allocators do not support free operations. Use clear unstead.");
 }
 
 void ecs::memory::allocator::LinearAllocator::Clear()

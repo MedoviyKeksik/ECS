@@ -24,8 +24,7 @@ class ECS_API LoggerManager
 
     static constexpr const char* LOG_FILE_NAME  = "ECS.log";
     static constexpr const char* DEFAULT_LOGGER = "ECS";
-    static constexpr const char* LOG_PATTERN =
-        "%d{%H:%M:%S,%q} [%t] %-5p %c{1} %x- %m%n";
+    static constexpr const char* LOG_PATTERN    = "%d{%H:%M:%S,%q} [%t] %-5p %c{1} %x- %m%n";
 
     // This class is not inteeded to be initialized
 

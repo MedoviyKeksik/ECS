@@ -17,8 +17,7 @@ class ECS_API MemoryChunkAllocator : protected memory::GlobalMemoryUser
     static const std::size_t MAX_OBJECTS = MAX_CHUNK_OBJECTS;
 
     // Byte size to fit approx. MAX_CHUNK_OBJECTS objects.
-    static const std::size_t ALLOCATE_SIZE =
-        (sizeof(OBJECT_TYPE) + alignof(OBJECT_TYPE)) * MAX_OBJECTS;
+    static const std::size_t ALLOCATE_SIZE = (sizeof(OBJECT_TYPE) + alignof(OBJECT_TYPE)) * MAX_OBJECTS;
 
     const char* allocatorTag;
 
@@ -41,9 +40,8 @@ public:
         MemoryChunk(Allocator* allocaor)
             : allocator(allocaor)
         {
-            this->chunkStart =
-                reinterpret_cast<uptr>(allocator->GetMemoryAddress());
-            this->chunkEnd = this->chunkStart + ALLOCATE_SIZE;
+            this->chunkStart = reinterpret_cast<uptr>(allocator->GetMemoryAddress());
+            this->chunkEnd   = this->chunkStart + ALLOCATE_SIZE;
             this->objects.clear();
         }
 
@@ -53,8 +51,7 @@ public:
 
     // Summary:	An iterator for linear search actions in allocated memory
     // chungs.
-    class iterator
-        : public std::iterator<std::forward_iterator_tag, OBJECT_TYPE>
+    class iterator : public std::iterator<std::forward_iterator_tag, OBJECT_TYPE>
     {
         typename MemoryChunks::iterator currentChunk;
         typename MemoryChunks::iterator end;
@@ -62,8 +59,7 @@ public:
         typename ObjectList::iterator currentObject;
 
     public:
-        iterator(typename MemoryChunks::iterator begin,
-                 typename MemoryChunks::iterator end)
+        iterator(typename MemoryChunks::iterator begin, typename MemoryChunks::iterator end)
             : currentChunk(begin)
             , end(end)
         {
@@ -92,8 +88,7 @@ public:
                 {
                     // set object iterator to begin of next chunk list
                     assert((*this->currentChunk) != nullptr);
-                    this->currentObject =
-                        (*this->currentChunk)->objects.begin();
+                    this->currentObject = (*this->currentChunk)->objects.begin();
                 }
             }
 
@@ -105,13 +100,11 @@ public:
 
         inline bool operator==(iterator& other)
         {
-            return ((this->currentChunk == other.currentChunk) &&
-                    (this->currentObject == other.currentObject));
+            return ((this->currentChunk == other.currentChunk) && (this->currentObject == other.currentObject));
         }
         inline bool operator!=(iterator& other)
         {
-            return ((this->currentChunk != other.currentChunk) &&
-                    (this->currentObject != other.currentObject));
+            return ((this->currentChunk != other.currentChunk) && (this->currentObject != other.currentObject));
         }
 
     }; // ComponentContainer::iterator
@@ -125,11 +118,8 @@ public:
     {
 
         // create initial chunk
-        Allocator* allocator =
-            new Allocator(ALLOCATE_SIZE,
-                          Allocate(ALLOCATE_SIZE, allocatorTag),
-                          sizeof(OBJECT_TYPE),
-                          alignof(OBJECT_TYPE));
+        Allocator* allocator = new Allocator(
+            ALLOCATE_SIZE, Allocate(ALLOCATE_SIZE, allocatorTag), sizeof(OBJECT_TYPE), alignof(OBJECT_TYPE));
         this->chunks.push_back(new MemoryChunk(allocator));
     }
 
@@ -164,8 +154,7 @@ public:
             if (chunk->objects.size() > MAX_OBJECTS)
                 continue;
 
-            slot = chunk->allocator->Allocate(sizeof(OBJECT_TYPE),
-                                              alignof(OBJECT_TYPE));
+            slot = chunk->allocator->Allocate(sizeof(OBJECT_TYPE), alignof(OBJECT_TYPE));
             if (slot != nullptr)
             {
                 chunk->objects.push_back((OBJECT_TYPE*)slot);
@@ -176,21 +165,16 @@ public:
         // all chunks are full... allocate a new one
         if (slot == nullptr)
         {
-            Allocator* allocator =
-                new Allocator(ALLOCATE_SIZE,
-                              Allocate(ALLOCATE_SIZE, this->allocatorTag),
-                              sizeof(OBJECT_TYPE),
-                              alignof(OBJECT_TYPE));
+            Allocator* allocator = new Allocator(
+                ALLOCATE_SIZE, Allocate(ALLOCATE_SIZE, this->allocatorTag), sizeof(OBJECT_TYPE), alignof(OBJECT_TYPE));
             MemoryChunk* newChunk = new MemoryChunk(allocator);
 
             // put new chunk in front
             this->chunks.push_front(newChunk);
 
-            slot = newChunk->allocator->Allocate(sizeof(OBJECT_TYPE),
-                                                 alignof(OBJECT_TYPE));
+            slot = newChunk->allocator->Allocate(sizeof(OBJECT_TYPE), alignof(OBJECT_TYPE));
 
-            assert(slot != nullptr &&
-                   "Unable to create new object. Out of memory?!");
+            assert(slot != nullptr && "Unable to create new object. Out of memory?!");
             newChunk->objects.clear();
             newChunk->objects.push_back((OBJECT_TYPE*)slot);
         }
@@ -217,14 +201,8 @@ public:
         assert(false && "Failed to delete object. Memory corruption?!");
     }
 
-    inline iterator begin()
-    {
-        return iterator(this->chunks.begin(), this->chunks.end());
-    }
-    inline iterator end()
-    {
-        return iterator(this->chunks.end(), this->chunks.end());
-    }
+    inline iterator begin() { return iterator(this->chunks.begin(), this->chunks.end()); }
+    inline iterator end() { return iterator(this->chunks.end(), this->chunks.end()); }
 
 }; // MemoryChunkAllocator
 

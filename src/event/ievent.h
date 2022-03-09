@@ -23,15 +23,9 @@ public:
     inline auto&       GetTimeCreated() { return this->timeCreated; }
 
 private:
-    inline void SetTypeID(const EventTypeId eventTypeID)
-    {
-        this->typeId = eventTypeID;
-    }
+    inline void SetTypeID(const EventTypeId eventTypeID) { this->typeId = eventTypeID; }
 
-    inline void SetTimeCreated(const EventTimeStamp timeCreated)
-    {
-        this->timeCreated = timeCreated;
-    }
+    inline void SetTimeCreated(const EventTimeStamp timeCreated) { this->timeCreated = timeCreated; }
 
 private:
     EventTypeId    typeId;

@@ -43,8 +43,7 @@ public:
             {
                 auto result = std::find_if(this->GetEventCallbacks().begin(),
                                            this->GetEventCallbacks().end(),
-                                           [&](const IEventDelegate* other)
-                                           { return other->operator==(EC); });
+                                           [&](const IEventDelegate* other) { return other->operator==(EC); });
                 if (result != this->GetEventCallbacks().end())
                 {
                     IEventDelegate* ptrMem = (IEventDelegate*)(*result);
@@ -68,9 +67,7 @@ public:
     {
         auto result = std::find_if(this->GetPendingRemoveDelegates().begin(),
                                    this->GetPendingRemoveDelegates().end(),
-                                   [&](const IEventDelegate* other) {
-                                       return other->operator==(eventDelegate);
-                                   });
+                                   [&](const IEventDelegate* other) { return other->operator==(eventDelegate); });
 
         if (result != this->GetPendingRemoveDelegates().end())
         {
@@ -84,11 +81,9 @@ public:
     {
         if (this->GetLocked() == false)
         {
-            auto result =
-                std::find_if(this->GetEventCallbacks().begin(),
-                             this->GetEventCallbacks().end(),
-                             [&](const IEventDelegate* other)
-                             { return other->operator==(eventDelegate); });
+            auto result = std::find_if(this->GetEventCallbacks().begin(),
+                                       this->GetEventCallbacks().end(),
+                                       [&](const IEventDelegate* other) { return other->operator==(eventDelegate); });
 
             if (result != this->GetEventCallbacks().end())
             {
@@ -102,11 +97,9 @@ public:
         }
         else
         {
-            auto result =
-                std::find_if(this->GetEventCallbacks().begin(),
-                             this->GetEventCallbacks().end(),
-                             [&](const IEventDelegate* other)
-                             { return other->operator==(eventDelegate); });
+            auto result = std::find_if(this->GetEventCallbacks().begin(),
+                                       this->GetEventCallbacks().end(),
+                                       [&](const IEventDelegate* other) { return other->operator==(eventDelegate); });
             //        assert(result != this->GetEventCallbacks().end() && "");
             if (result != this->GetEventCallbacks().end())
             {
@@ -114,35 +107,19 @@ public:
             }
         }
     }
-    virtual std::size_t GetEventCallbackCount() const override
-    {
-        return this->GetEventCallbacks().size();
-    }
+    virtual std::size_t GetEventCallbackCount() const override { return this->GetEventCallbacks().size(); }
 
 private:
-    inline void SetPendingRemoveDelegates(
-        const PendingRemoveDelegates& pendingRemoveDelegates)
+    inline void SetPendingRemoveDelegates(const PendingRemoveDelegates& pendingRemoveDelegates)
     {
         this->pendingRemoveDelegates = pendingRemoveDelegates;
     }
-    inline auto& GetPendingRemoveDelegates()
-    {
-        return this->pendingRemoveDelegates;
-    }
-    inline const auto& GetPendingRemoveDelegates() const
-    {
-        return this->pendingRemoveDelegates;
-    }
+    inline auto&       GetPendingRemoveDelegates() { return this->pendingRemoveDelegates; }
+    inline const auto& GetPendingRemoveDelegates() const { return this->pendingRemoveDelegates; }
 
-    inline void SetEventCallbacks(const EventDelegateList& eventCallbacks)
-    {
-        this->eventCallbacks = eventCallbacks;
-    }
-    inline auto&       GetEventCallbacks() { return this->eventCallbacks; }
-    inline const auto& GetEventCallbacks() const
-    {
-        return this->eventCallbacks;
-    }
+    inline void  SetEventCallbacks(const EventDelegateList& eventCallbacks) { this->eventCallbacks = eventCallbacks; }
+    inline auto& GetEventCallbacks() { return this->eventCallbacks; }
+    inline const auto& GetEventCallbacks() const { return this->eventCallbacks; }
 
     inline void        SetLocked(bool locked) { this->locked = locked; }
     inline auto&       GetLocked() { return this->locked; }

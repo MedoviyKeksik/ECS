@@ -9,9 +9,7 @@ ComponentManager::ComponentManager()
     DEFINE_LOGGER("ComponentManager")
     LogInfo("Initialize ComponentManager!");
 
-    const std::size_t numComponents{
-        util::internal::FamilyTypeID<IComponent>::Get()
-    };
+    const std::size_t numComponents{ util::internal::FamilyTypeID<IComponent>::Get() };
 
     this->entityComponentMap.resize(ENITY_LUT_GROW);
     for (auto i = 0; i < ENITY_LUT_GROW; ++i)
@@ -22,8 +20,7 @@ ComponentManager::~ComponentManager()
 {
     for (auto cc : this->componentContainerRegistry)
     {
-        LogDebug("Releasing remaining entities of type '%s' ...",
-                 cc.second->GetComponentContainerTypeName());
+        LogDebug("Releasing remaining entities of type '%s' ...", cc.second->GetComponentContainerTypeName());
         delete cc.second;
         cc.second = nullptr;
     }
@@ -35,11 +32,9 @@ void ComponentManager::RemoveAllComponents(const EntityId entityId)
 {
     static const std::size_t numComponents = this->entityComponentMap[0].size();
 
-    for (ComponentTypeId componentTypeId = 0; componentTypeId < numComponents;
-         ++componentTypeId)
+    for (ComponentTypeId componentTypeId = 0; componentTypeId < numComponents; ++componentTypeId)
     {
-        const ComponentId componentId =
-            this->entityComponentMap[entityId.index][componentTypeId];
+        const ComponentId componentId = this->entityComponentMap[entityId.index][componentTypeId];
         if (componentId == INVALID_COMPONENT_ID)
             continue;
 
@@ -62,19 +57,13 @@ void ComponentManager::RemoveAllComponents(const EntityId entityId)
 
 void ComponentManager::ReleaseComponentId(ComponentId id)
 {
-    assert((id != INVALID_COMPONENT_ID &&
-            id < this->componentLookupTable.size()) &&
-           "Invalid component id");
+    assert((id != INVALID_COMPONENT_ID && id < this->componentLookupTable.size()) && "Invalid component id");
     this->componentLookupTable[id] = nullptr;
 }
 
-void ComponentManager::MapEntityComponent(EntityId        entityId,
-                                          ComponentId     componentId,
-                                          ComponentTypeId componentTypeId)
+void ComponentManager::MapEntityComponent(EntityId entityId, ComponentId componentId, ComponentTypeId componentTypeId)
 {
-    static const std::size_t numComponents{
-        util::internal::FamilyTypeID<IComponent>::Get()
-    };
+    static const std::size_t numComponents{ util::internal::FamilyTypeID<IComponent>::Get() };
 
     if ((this->entityComponentMap.size() - 1) < entityId.index)
     {
@@ -86,25 +75,20 @@ void ComponentManager::MapEntityComponent(EntityId        entityId,
         this->entityComponentMap.resize(newSize);
 
         for (auto i = oldSize; i < newSize; ++i)
-            this->entityComponentMap[i].resize(numComponents,
-                                               INVALID_COMPONENT_ID);
+            this->entityComponentMap[i].resize(numComponents, INVALID_COMPONENT_ID);
     }
 
     // create mapping
     this->entityComponentMap[entityId.index][componentTypeId] = componentId;
 }
 
-void ComponentManager::UnmapEntityComponent(EntityId        entityId,
-                                            ComponentId     componentId,
-                                            ComponentTypeId componentTypeId)
+void ComponentManager::UnmapEntityComponent(EntityId entityId, ComponentId componentId, ComponentTypeId componentTypeId)
 {
-    assert(this->entityComponentMap[entityId.index][componentTypeId] ==
-               componentId &&
+    assert(this->entityComponentMap[entityId.index][componentTypeId] == componentId &&
            "FATAL: Entity Component ID mapping corruption!");
 
     // free mapping
-    this->entityComponentMap[entityId.index][componentTypeId] =
-        INVALID_COMPONENT_ID;
+    this->entityComponentMap[entityId.index][componentTypeId] = INVALID_COMPONENT_ID;
 
     // free component id
     this->ReleaseComponentId(componentId);
@@ -142,15 +126,13 @@ void IEntity::SetActive(bool active)
 EntityManager::EntityManager(ComponentManager* componentManagerInstance)
     : pendingDestroyedEntities(1024)
     , numPendingDestroyedEntities(0)
-    , componentManager(componentManagerInstance){ DEFINE_LOGGER(
-          "EntityManager") LogInfo("InitializeEntityManager!") }
+    , componentManager(componentManagerInstance){ DEFINE_LOGGER("EntityManager") LogInfo("InitializeEntityManager!") }
 
     EntityManager::~EntityManager()
 {
     for (auto ec : this->entityRegistry)
     {
-        LogDebug("Releasing remaining entities of type '%s' ...",
-                 ec.second->GetEntityContainerTypeName());
+        LogDebug("Releasing remaining entities of type '%s' ...", ec.second->GetEntityContainerTypeName());
         delete ec.second;
         ec.second = nullptr;
     }
@@ -201,11 +183,9 @@ void EntityManager::DestroyEntity(EntityId entityId)
     //    IEntity* entity = this->entityHandleTable[entityId];
     //    const EntityTypeId ETID = entity->GetStaticEntityTypeID();
 
-    if (this->numPendingDestroyedEntities <
-        this->pendingDestroyedEntities.size())
+    if (this->numPendingDestroyedEntities < this->pendingDestroyedEntities.size())
     {
-        this->pendingDestroyedEntities[this->numPendingDestroyedEntities++] =
-            entityId;
+        this->pendingDestroyedEntities[this->numPendingDestroyedEntities++] = entityId;
     }
     else
     {
@@ -220,15 +200,13 @@ SystemManager::SystemManager()
     LogInfo("Initialize SystemManager!");
 
     // acquire global memory
-    this->systemAllocator = new SystemAllocator(
-        ECS_SYSTEM_MEMORY_BUFFER_SIZE,
-        Allocate(ECS_SYSTEM_MEMORY_BUFFER_SIZE, "SystemManager"));
+    this->systemAllocator =
+        new SystemAllocator(ECS_SYSTEM_MEMORY_BUFFER_SIZE, Allocate(ECS_SYSTEM_MEMORY_BUFFER_SIZE, "SystemManager"));
 }
 
 SystemManager::~SystemManager()
 {
-    for (SystemWorkOrder::reverse_iterator it = this->systemWorkOrder.rbegin();
-         it != this->systemWorkOrder.rend();
+    for (SystemWorkOrder::reverse_iterator it = this->systemWorkOrder.rbegin(); it != this->systemWorkOrder.rend();
          ++it)
     {
         (*it)->~ISystem();
@@ -256,8 +234,7 @@ void SystemManager::Update(f32 dt_ms)
         // check systems update state
         system->isNeedsUpdate =
             (system->updateInterval < 0.0f) ||
-            ((system->updateInterval > 0.0f) &&
-             (system->timeSinceLastUpdate > system->updateInterval));
+            ((system->updateInterval > 0.0f) && (system->timeSinceLastUpdate > system->updateInterval));
 
         if (system->isEnabled == true && system->isNeedsUpdate == true)
         {
@@ -288,10 +265,8 @@ void SystemManager::Update(f32 dt_ms)
 void SystemManager::UpdateSystemWorkOrder()
 {
     // depth-first-search function
-    static const std::function<void(SystemTypeId,
-                                    std::vector<int>&,
-                                    const std::vector<std::vector<bool>>&,
-                                    std::vector<SystemTypeId>&)>
+    static const std::function<void(
+        SystemTypeId, std::vector<int>&, const std::vector<std::vector<bool>>&, std::vector<SystemTypeId>&)>
         dfs = [&](SystemTypeId                          vertex,
                   std::vector<int>&                     vertexState,
                   const std::vector<std::vector<bool>>& edges,
@@ -342,8 +317,7 @@ void SystemManager::UpdateSystemWorkOrder()
             for (int i = 0; i < indices.size(); ++i)
             {
                 if (indices[i] != -1 &&
-                    (this->systemDependencyMatrix[i][index] == true ||
-                     this->systemDependencyMatrix[index][i] == true))
+                    (this->systemDependencyMatrix[i][index] == true || this->systemDependencyMatrix[index][i] == true))
                 {
                     member.push_back(i);
                     indices[i] = -1;
@@ -352,10 +326,9 @@ void SystemManager::UpdateSystemWorkOrder()
 
             group.push_back(index);
 
-            ISystem* sys         = this->systemRegistry[index];
-            currentGroupPriority = std::max(
-                (sys != nullptr ? sys->systemPriority : NORMAL_SYSTEM_PRIORITY),
-                currentGroupPriority);
+            ISystem* sys = this->systemRegistry[index];
+            currentGroupPriority =
+                std::max((sys != nullptr ? sys->systemPriority : NORMAL_SYSTEM_PRIORITY), currentGroupPriority);
         }
 
         vertexGroups.push_back(group);
@@ -385,10 +358,8 @@ void SystemManager::UpdateSystemWorkOrder()
 
         // note: MAX - PRIORITY will frce the correct sorting behaviour in
         // multimap (by default a multimap sorts int values from low to high)
-        vertexGroupsSorted.insert(
-            std::pair<SystemPriority, std::vector<SystemTypeId>>(
-                std::numeric_limits<SystemPriority>::max() - groupPriority[i],
-                order));
+        vertexGroupsSorted.insert(std::pair<SystemPriority, std::vector<SystemTypeId>>(
+            std::numeric_limits<SystemPriority>::max() - groupPriority[i], order));
     }
 
     LogInfo("Update system work order:")
@@ -423,8 +394,7 @@ SystemWorkStateMask SystemManager::GetSystemWorkState() const
 
 void SystemManager::SetSystemWorkState(SystemWorkStateMask mask)
 {
-    assert(mask.size() == this->systemWorkOrder.size() &&
-           "Provided mask does not match size of current system array.");
+    assert(mask.size() == this->systemWorkOrder.size() && "Provided mask does not match size of current system array.");
 
     for (int i = 0; i < this->systemWorkOrder.size(); ++i)
     {
