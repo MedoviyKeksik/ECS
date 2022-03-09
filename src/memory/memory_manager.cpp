@@ -32,7 +32,7 @@ ecs::memory::internal::MemoryManager::~MemoryManager()
 
 void* ecs::memory::internal::MemoryManager::Allocate(std::size_t memorySize, const std::string& user)
 {
-    LogDebug("%s allocated %d bytes of global memory.", user.data() != nullptr ? user : "Unknown", memorySize);
+    LogDebug("%s allocated %d bytes of global memory.", user.data() != nullptr ? user.c_str() : "Unknown", memorySize);
     void* pointerMemory = memoryAllocator->Allocate(memorySize, alignof(u8));
     this->pendingMemory.push_back(std::make_pair(user, pointerMemory));
     return pointerMemory;
@@ -98,7 +98,7 @@ void ecs::memory::internal::MemoryManager::CheckMemoryLeaks()
 
             if (isFreed == false)
             {
-                LogFatal("\'%s\' memory user didn't release allocated memory %p!", i.first, i.second)
+                LogFatal("\'%s\' memory user didn't release allocated memory %p!", i.first.c_str(), i.second)
             }
         }
     }
