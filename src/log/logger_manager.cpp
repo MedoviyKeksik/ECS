@@ -11,11 +11,11 @@ ecs::log::internal::LoggerManager::LoggerManager()
     const log4cplus::tstring PATTERN = LOG4CPLUS_TEXT(LOG_PATTERN);
     // create console log output
     log4cplus::SharedAppenderPtr consoleApp(new log4cplus::ConsoleAppender());
-    consoleApp->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout(PATTERN)));
+    consoleApp->setLayout(std::unique_ptr<log4cplus::Layout>(new log4cplus::PatternLayout(PATTERN)));
 
     // create log file output
     log4cplus::SharedAppenderPtr fileApp(new log4cplus::FileAppender(LOG4CPLUS_TEXT(LOG_FILE_NAME)));
-    fileApp->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout(PATTERN)));
+    fileApp->setLayout(std::unique_ptr<log4cplus::Layout>(new log4cplus::PatternLayout(PATTERN)));
 
     // get root logger
     this->m_RootLogger = log4cplus::Logger::getRoot();
