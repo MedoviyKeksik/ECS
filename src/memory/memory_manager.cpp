@@ -32,7 +32,6 @@ ecs::memory::internal::MemoryManager::~MemoryManager()
 
 void* ecs::memory::internal::MemoryManager::Allocate(std::size_t memorySize, const std::string& user)
 {
-    LogDebug("%s allocated %d bytes of global memory.", user.data() != nullptr ? user.c_str() : "Unknown", memorySize);
     void* pointerMemory = memoryAllocator->Allocate(memorySize, alignof(u8));
     this->pendingMemory.push_back(std::make_pair(user, pointerMemory));
     return pointerMemory;
