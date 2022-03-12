@@ -21,7 +21,7 @@ ecs::log::internal::LoggerManager::LoggerManager()
     this->m_RootLogger = log4cplus::Logger::getRoot();
 
     // set root log level
-    this->m_RootLogger.setLogLevel(log4cplus::ALL_LOG_LEVEL);
+    this->m_RootLogger.setLogLevel(log4cplus::ERROR_LOG_LEVEL);
 
     // add appenders
     this->m_RootLogger.addAppender(consoleApp);

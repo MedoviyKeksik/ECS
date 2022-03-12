@@ -20,7 +20,6 @@ ComponentManager::~ComponentManager()
 {
     for (auto cc : this->componentContainerRegistry)
     {
-        LogDebug("Releasing remaining entities of type '%s' ...", cc.second->GetComponentContainerTypeName());
         delete cc.second;
         cc.second = nullptr;
     }
@@ -132,7 +131,6 @@ EntityManager::EntityManager(ComponentManager* componentManagerInstance)
 {
     for (auto ec : this->entityRegistry)
     {
-        LogDebug("Releasing remaining entities of type '%s' ...", ec.second->GetEntityContainerTypeName());
         delete ec.second;
         ec.second = nullptr;
     }

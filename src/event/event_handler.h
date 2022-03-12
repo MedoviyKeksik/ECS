@@ -65,7 +65,7 @@ public:
         if (pMem != nullptr)
         {
             this->GetEventStorage().push_back(new (pMem) E(std::forward<Args>(eventArgs)...));
-            LogTrace("\'%s\' event buffered.", typeid(E).name());
+            LogTrace("%s event buffered.", typeid(E).name());
         }
         else
         {
