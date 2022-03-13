@@ -9,6 +9,7 @@
 // Log4cplus logger support
 #include "log4cplus/logger.h"
 #include "logger.h"
+#include "log4cplus/initializer.h"
 
 namespace ecs::log
 {
@@ -40,7 +41,7 @@ public:
     LoggerManager(const LoggerManager&) = delete;
     LoggerManager& operator=(LoggerManager&) = delete;
     Logger*        GetLogger(const char* logger = DEFAULT_LOGGER);
-
+    log4cplus::Initializer initializer;
 }; // class LoggerManager
 
 } // namespace internal
