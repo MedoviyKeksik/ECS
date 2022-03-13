@@ -31,6 +31,9 @@ EcsEngine::~EcsEngine()
 
     delete ecsEventHandler;
     ecsEventHandler = nullptr;
+
+    delete ecsEngineTime;
+    ecsEngineTime = nullptr;
 }
 
 void EcsEngine::Update(f32 tick_ms)
